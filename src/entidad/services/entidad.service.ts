@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import { Entidad } from '../entities/entidad.entity';
 import { TipoEntidad } from 'src/common/tipoEntidad.enum';
@@ -93,5 +93,98 @@ export class EntidadService {
       default:
         throw new BadRequestException('Tipo de entidad no soportado:');
     }
+  }
+
+  async findAll() {
+    const entidades = await this.entidadRepository.find();
+
+    const personaIds = entidades
+      .filter((entidad) => entidad.tipo === TipoEntidad.PERSONA)
+      .map((entidad) => entidad.id);
+
+    const vehiculoIds = entidades
+      .filter((entidad) => entidad.tipo === TipoEntidad.VEHICULO)
+      .map((entidad) => entidad.id);
+
+    const empresaIds = entidades
+      .filter((entidad) => entidad.tipo === TipoEntidad.EMPRESA)
+      .map((entidad) => entidad.id);
+
+    const [personas, vehiculos, empresas] = await Promise.all([
+      personaIds.length > 0
+        ? this.personaRepository.find({
+            where: {
+              id: In(personaIds),
+            },
+          })
+        : Promise.resolve([] as Persona[]),
+
+      vehiculoIds.length > 0
+        ? this.vehiculoRepository.find({
+            where: {
+              id: In(vehiculoIds),
+            },
+          })
+        : Promise.resolve([] as Vehiculo[]),
+
+      empresaIds.length > 0
+        ? this.empresaRepository.find({
+            where: {
+              id: In(empresaIds),
+            },
+          })
+        : Promise.resolve([] as Empresa[]),
+    ]);
+
+    const personasMap = new Map<number, Persona>(
+      personas.map((persona): [number, Persona] => [persona.id, persona]),
+    );
+
+    const vehiculosMap = new Map<number, Vehiculo>(
+      vehiculos.map((vehiculo): [number, Vehiculo] => [vehiculo.id, vehiculo]),
+    );
+
+    const empresasMap = new Map<number, Empresa>(
+      empresas.map((empresa): [number, Empresa] => [empresa.id, empresa]),
+    );
+
+    return entidades.map((entidad) => {
+      switch (entidad.tipo) {
+        case TipoEntidad.PERSONA: {
+          const persona = personasMap.get(entidad.id);
+
+          return {
+            id: entidad.id,
+            tipo: entidad.tipo,
+            detalle: persona ?? null,
+          };
+        }
+
+        case TipoEntidad.VEHICULO: {
+          const vehiculo = vehiculosMap.get(entidad.id);
+
+          return {
+            id: entidad.id,
+            tipo: entidad.tipo,
+            detalle: vehiculo ?? null,
+          };
+        }
+
+        case TipoEntidad.EMPRESA: {
+          const empresa = empresasMap.get(entidad.id);
+
+          return {
+            id: entidad.id,
+            tipo: entidad.tipo,
+            detalle: empresa ?? null,
+          };
+        }
+
+        default:
+          throw new BadRequestException(
+            `Tipo de entidad no soportado: ${entidad.tipo}`,
+          );
+      }
+    });
   }
 }

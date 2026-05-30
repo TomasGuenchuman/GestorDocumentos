@@ -16,13 +16,19 @@ import { EntidadService } from './services/entidad.service';
 import { PersonaController } from './controllers/persona.controller';
 import { EmpresaController } from './controllers/empresa.controller';
 import { VehiculoController } from './controllers/vehiculo.controller';
+import { EntidadController } from './controllers/entidad.controller';
 
 @Module({
   imports: [
     // Importante: Registrar todas las tablas aquí
     TypeOrmModule.forFeature([Entidad, Persona, Empresa, Vehiculo]),
   ],
-  controllers: [PersonaController, EmpresaController, VehiculoController],
+  controllers: [
+    PersonaController,
+    EmpresaController,
+    VehiculoController,
+    EntidadController,
+  ],
   providers: [PersonaService, EmpresaService, VehiculoService, EntidadService],
   exports: [PersonaService, EmpresaService, VehiculoService, EntidadService],
 })
