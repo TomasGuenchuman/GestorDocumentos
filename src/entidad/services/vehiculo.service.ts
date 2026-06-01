@@ -1,14 +1,21 @@
-// persona.service.ts
-import { Injectable } from '@nestjs/common';
-import { DataSource } from 'typeorm';
+// vehiculo.service.ts
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { DataSource, Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 import { Entidad } from '../entities/entidad.entity';
 import { TipoEntidad } from 'src/common/tipoEntidad.enum';
 import { Vehiculo } from '../entities/vehiculo.entity';
 import { createVehiculoDTO } from '../dto/createVehiculoDTO.dto';
+import { UpdateVehiculoDto } from '../dto/UpdateVehiculoDto.dto';
 
 @Injectable()
 export class VehiculoService {
-  constructor(private dataSource: DataSource) {}
+  constructor(
+    private readonly dataSource: DataSource,
+
+    @InjectRepository(Vehiculo)
+    private readonly vehiculoRepository: Repository<Vehiculo>,
+  ) {}
 
   async crearVehiculo(dto: createVehiculoDTO) {
     const queryRunner = this.dataSource.createQueryRunner();
@@ -42,5 +49,21 @@ export class VehiculoService {
     } finally {
       await queryRunner.release();
     }
+  }
+
+  async update(
+    id: number,
+    updateVehiculoDto: UpdateVehiculoDto,
+  ): Promise<Vehiculo> {
+    const vehiculo = await this.vehiculoRepository.preload({
+      id,
+      ...updateVehiculoDto,
+    });
+
+    if (!vehiculo) {
+      throw new NotFoundException(`No existe un vehículo con id ${id}`);
+    }
+
+    return this.vehiculoRepository.save(vehiculo);
   }
 }
