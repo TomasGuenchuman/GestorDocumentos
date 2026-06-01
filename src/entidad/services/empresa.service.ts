@@ -5,10 +5,17 @@ import { Entidad } from '../entities/entidad.entity';
 import { TipoEntidad } from 'src/common/tipoEntidad.enum';
 import { Empresa } from '../entities/empresa.entity';
 import { createEmpresaDTO } from '../dto/createEmpresaDTO.dto';
-
+import { UpdateEmpresaDto } from '../dto/UpdateEmpresaDto.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { NotFoundException } from '@nestjs/common';
 @Injectable()
 export class EmpresaService {
-  constructor(private dataSource: DataSource) {}
+  constructor(
+    private dataSource: DataSource,
+    @InjectRepository(Empresa)
+    private empresaRepository: Repository<Empresa>,
+  ) {}
 
   async crearEmpresa(dto: createEmpresaDTO) {
     const queryRunner = this.dataSource.createQueryRunner();
@@ -41,5 +48,21 @@ export class EmpresaService {
     } finally {
       await queryRunner.release();
     }
+  }
+
+  async update(
+    id: number,
+    updateEmpresaDto: UpdateEmpresaDto,
+  ): Promise<Empresa> {
+    const empresa = await this.empresaRepository.preload({
+      id,
+      ...updateEmpresaDto,
+    });
+
+    if (!empresa) {
+      throw new NotFoundException(`No existe una empresa con id ${id}`);
+    }
+
+    return this.empresaRepository.save(empresa);
   }
 }

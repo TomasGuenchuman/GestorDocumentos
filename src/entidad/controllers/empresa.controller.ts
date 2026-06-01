@@ -6,9 +6,11 @@ import {
   Patch,
   Param,
   Delete,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { EmpresaService } from '../services/empresa.service';
 import { createEmpresaDTO } from '../dto/createEmpresaDTO.dto';
+import { UpdateEmpresaDto } from '../dto/UpdateEmpresaDto.dto';
 
 @Controller('empresas') // <--- Ruta específica
 export class EmpresaController {
@@ -17,5 +19,13 @@ export class EmpresaController {
   @Post()
   crear(@Body() dto: createEmpresaDTO) {
     return this.empresaService.crearEmpresa(dto);
+  }
+
+  @Patch('empresas/:id')
+  updateEmpresa(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateEmpresaDto: UpdateEmpresaDto,
+  ) {
+    return this.empresaService.update(id, updateEmpresaDto);
   }
 }
