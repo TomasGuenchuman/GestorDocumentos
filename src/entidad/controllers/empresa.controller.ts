@@ -21,7 +21,7 @@ export class EmpresaController {
     return this.empresaService.crearEmpresa(dto);
   }
 
-  @Patch('empresas/:id')
+  @Patch(':id')
   updateEmpresa(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateEmpresaDto: UpdateEmpresaDto,
