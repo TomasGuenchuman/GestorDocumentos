@@ -187,4 +187,57 @@ export class EntidadService {
       }
     });
   }
+
+  async findOne(id: number) {
+    const entidad = await this.entidadRepository.findOne({
+      where: { id },
+    });
+
+    if (!entidad) {
+      throw new NotFoundException(`Entidad con ID ${id} no encontrada`);
+    }
+
+    switch (entidad.tipo) {
+      case TipoEntidad.PERSONA: {
+        const persona = await this.personaRepository.findOne({
+          where: { id: entidad.id },
+        });
+
+        return {
+          id: entidad.id,
+          tipo: entidad.tipo,
+          detalle: persona ?? null,
+        };
+      }
+
+      case TipoEntidad.VEHICULO: {
+        const vehiculo = await this.vehiculoRepository.findOne({
+          where: { id: entidad.id },
+        });
+
+        return {
+          id: entidad.id,
+          tipo: entidad.tipo,
+          detalle: vehiculo ?? null,
+        };
+      }
+
+      case TipoEntidad.EMPRESA: {
+        const empresa = await this.empresaRepository.findOne({
+          where: { id: entidad.id },
+        });
+
+        return {
+          id: entidad.id,
+          tipo: entidad.tipo,
+          detalle: empresa ?? null,
+        };
+      }
+
+      default:
+        throw new BadRequestException(
+          `Tipo de entidad no soportado: ${entidad.tipo}`,
+        );
+    }
+  }
 }
