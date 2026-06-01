@@ -1,14 +1,20 @@
 // persona.service.ts
-import { Injectable } from '@nestjs/common';
-import { DataSource } from 'typeorm';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { DataSource, Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 import { Entidad } from '../entities/entidad.entity';
 import { TipoEntidad } from 'src/common/tipoEntidad.enum';
 import { Persona } from '../entities/persona.entity';
 import { createPersonaDTO } from '../dto/createPersonaDTO.dto';
+import { UpdatePersonaDto } from '../dto/pdate-persona.dto';
 
 @Injectable()
 export class PersonaService {
-  constructor(private dataSource: DataSource) {}
+  constructor(
+    private dataSource: DataSource,
+    @InjectRepository(Persona)
+    private readonly personaRepository: Repository<Persona>,
+  ) {}
 
   async crearPersona(dto: createPersonaDTO) {
     const queryRunner = this.dataSource.createQueryRunner();
@@ -42,5 +48,21 @@ export class PersonaService {
     } finally {
       await queryRunner.release();
     }
+  }
+
+  async update(
+    id: number,
+    updatePersonaDto: UpdatePersonaDto,
+  ): Promise<Persona> {
+    const persona = await this.personaRepository.preload({
+      id,
+      ...updatePersonaDto,
+    });
+
+    if (!persona) {
+      throw new NotFoundException(`No existe una persona con id ${id}`);
+    }
+
+    return this.personaRepository.save(persona);
   }
 }
