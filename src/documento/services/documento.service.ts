@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Not } from 'typeorm';
+import { Repository, Not, FindOptionsWhere } from 'typeorm';
 
 import { Documento } from '../entities/documento.entity';
 import { CreateDocumentoDTO } from '../dto/createDocumentoDTO.dto';
@@ -194,5 +194,19 @@ export class DocumentoService {
 
     // 4. Guardar y retornar
     return await this.documentoRepository.save(documento);
+  }
+
+  async existeRelacion(
+    categoriaId: number,
+    entidadId: number,
+  ): Promise<boolean> {
+    const whereClause: FindOptionsWhere<Documento> = {
+      categoria: { id: categoriaId },
+      entidad: { id: entidadId },
+    };
+
+    return await this.documentoRepository.exists({
+      where: whereClause,
+    });
   }
 }
