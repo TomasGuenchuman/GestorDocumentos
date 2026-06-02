@@ -1,5 +1,5 @@
-// src/entidad/dto/update-empresa.dto.ts
-import { PartialType } from '@nestjs/mapped-types'; // o '@nestjs/swagger'
-import { createEmpresaDTO } from './createEmpresaDTO.dto'; // Asegura la ruta correcta
+// src/vehiculos/dto/update-vehiculo.dto.ts
+import { PartialType } from '@nestjs/swagger';
+import { createVehiculoDTO } from './createVehiculoDTO.dto'; // Revisa que la ruta coincida con tu estructura
 
-export class UpdateEmpresaDto extends PartialType(createEmpresaDTO) {}
+export class UpdateVehiculoDto extends PartialType(createVehiculoDTO) {}
