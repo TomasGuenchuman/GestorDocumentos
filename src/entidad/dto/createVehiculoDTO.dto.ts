@@ -5,6 +5,7 @@ import {
   Length,
   MaxLength,
 } from 'class-validator';
+import { Transform } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class createVehiculoDTO {
@@ -12,6 +13,9 @@ export class createVehiculoDTO {
     description: 'Patente o matrícula del vehículo (Máximo 10 caracteres)',
     example: 'AF123JK',
   })
+@Transform(({ value }: { value: string }) =>
+    typeof value === 'string' ? value.toUpperCase().trim() : value,
+  )
   @IsString({ message: 'La patente debe ser una cadena de texto' })
   @IsNotEmpty({ message: 'La patente no puede estar vacía' })
   @MaxLength(10, { message: 'La patente no puede superar los 10 caracteres' })
@@ -34,6 +38,5 @@ export class createVehiculoDTO {
   })
   @IsString({ message: 'El modelo debe ser un texto' })
   @IsNotEmpty({ message: 'El modelo es obligatorio' })
-
   modelo: string;
 }
