@@ -13,7 +13,6 @@ export class createEmpresaDTO {
   })
   razonSocial: string;
 
-
   @ApiProperty({
     description: 'Número de CUIT de la empresa (11 dígitos sin guiones)',
     example: '20304567891', // <--- AQUÍ DEFINES EL PLACEHOLDER
