@@ -20,7 +20,7 @@ export class VehiculoController {
   crear(@Body() dto: createVehiculoDTO) {
     return this.vehiculoService.crearVehiculo(dto);
   }
-  @Patch('vehiculos/:id')
+  @Patch(':id')
   updateVehiculo(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateVehiculoDto: UpdateVehiculoDto,
