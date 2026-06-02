@@ -1,17 +1,5 @@
-// src/entidad/dto/update-vehiculo.dto.ts
+// src/vehiculos/dto/update-vehiculo.dto.ts
+import { PartialType } from '@nestjs/swagger';
+import { createVehiculoDTO } from './createVehiculoDTO.dto'; // Revisa que la ruta coincida con tu estructura
 
-import { IsOptional, IsString } from 'class-validator';
-
-export class UpdateVehiculoDto {
-  @IsOptional()
-  @IsString()
-  patente?: string;
-
-  @IsOptional()
-  @IsString()
-  marca?: string;
-
-  @IsOptional()
-  @IsString()
-  modelo?: string;
-}
+export class UpdateVehiculoDto extends PartialType(createVehiculoDTO) {}
