@@ -3,6 +3,7 @@ import {
   Get,
   Post,
   Body,
+  Patch,
   Param,
   ParseIntPipe,
   UsePipes,
@@ -12,6 +13,7 @@ import {
 import { CategoriaService } from '../services/categoria.service';
 import { CreateCategoriaDTO } from '../dto/createCategoriaDTO.dto';
 import { Categoria } from '../entities/categoria.entity';
+import { UpdateCategoriaDTO } from '../dto/updateCategoria.dto';
 
 @Controller('categorias')
 export class CategoriaController {
@@ -34,5 +36,13 @@ export class CategoriaController {
   @Get(':id')
   async findOne(@Param('id', ParseIntPipe) id: number): Promise<Categoria> {
     return await this.categoriaService.findOne(id);
+  }
+
+  @Patch(':id')
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: UpdateCategoriaDTO,
+  ): Promise<Categoria> {
+    return await this.categoriaService.update(id, dto);
   }
 }

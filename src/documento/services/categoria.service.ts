@@ -8,6 +8,7 @@ import { Repository } from 'typeorm';
 
 import { Categoria } from '../entities/categoria.entity';
 import { CreateCategoriaDTO } from '../dto/createCategoriaDTO.dto';
+import { UpdateCategoriaDTO } from '../dto/updateCategoria.dto';
 
 @Injectable()
 export class CategoriaService {
@@ -50,5 +51,31 @@ export class CategoriaService {
     }
 
     return categoria;
+  }
+
+  async update(id: number, dto: UpdateCategoriaDTO): Promise<Categoria> {
+    const categoria = await this.findOne(id);
+
+    if (dto.nombre !== undefined) {
+      const nombre = dto.nombre;
+
+      const existe = await this.categoriaRepository.findOne({
+        where: {
+          nombre,
+        },
+      });
+
+      if (existe && existe.id !== id) {
+        throw new BadRequestException('Ya existe una categoría con ese nombre');
+      }
+
+      categoria.nombre = nombre;
+    }
+
+    if (dto.tipo !== undefined) {
+      categoria.tipo = dto.tipo;
+    }
+
+    return await this.categoriaRepository.save(categoria);
   }
 }
