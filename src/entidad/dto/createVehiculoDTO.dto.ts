@@ -1,4 +1,10 @@
-import { IsString, IsNotEmpty, Matches, Length, MaxLength } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  Matches,
+  Length,
+  MaxLength,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class createVehiculoDTO {

@@ -1,6 +1,10 @@
 // vehiculo.service.ts
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { DataSource, Repository } from 'typeorm';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
+import { DataSource, Repository, Not } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Entidad } from '../entities/entidad.entity';
 import { TipoEntidad } from 'src/common/tipoEntidad.enum';
@@ -18,6 +22,17 @@ export class VehiculoService {
   ) {}
 
   async crearVehiculo(dto: createVehiculoDTO) {
+    // 1. Validación de Negocio: La patente debe ser única
+    const vehiculoExistente = await this.vehiculoRepository.findOne({
+      where: { patente: dto.patente },
+    });
+
+    if (vehiculoExistente) {
+      throw new BadRequestException(
+        `Ya existe un vehículo registrado con la patente ${dto.patente}`,
+      );
+    }
+
     const queryRunner = this.dataSource.createQueryRunner();
 
     await queryRunner.connect();
@@ -55,15 +70,43 @@ export class VehiculoService {
     id: number,
     updateVehiculoDto: UpdateVehiculoDto,
   ): Promise<Vehiculo> {
-    const vehiculo = await this.vehiculoRepository.preload({
+    // 1. Verificar primero si el vehículo a actualizar realmente existe en la base de datos
+    const vehiculoExistente = await this.vehiculoRepository.findOne({
+      where: { id },
+    });
+    if (!vehiculoExistente) {
+      throw new NotFoundException(`No existe un vehículo con id ${id}`);
+    }
+
+    // 2. Validación de Negocio: Si está intentando cambiar la patente, verificar que no la use OTR0 vehículo
+    if (updateVehiculoDto.patente) {
+      const patenteDuplicada = await this.vehiculoRepository.findOne({
+        where: {
+          patente: updateVehiculoDto.patente,
+          id: Not(id), // Excluimos al vehículo actual de la búsqueda
+        },
+      });
+
+      if (patenteDuplicada) {
+        throw new BadRequestException(
+          `La patente ${updateVehiculoDto.patente} ya está asignada a otro vehículo`,
+        );
+      }
+    }
+
+    // 3. Aplicar los cambios parciales con preload
+    const vehiculoALogear = await this.vehiculoRepository.preload({
       id,
       ...updateVehiculoDto,
     });
 
-    if (!vehiculo) {
-      throw new NotFoundException(`No existe un vehículo con id ${id}`);
+    // 4. Salvaguarda para TypeScript (Type Narrowing) evitando errores de asignación por 'undefined'
+    if (!vehiculoALogear) {
+      throw new NotFoundException(
+        `No se pudo precargar el vehículo con id ${id}`,
+      );
     }
 
-    return this.vehiculoRepository.save(vehiculo);
+    return this.vehiculoRepository.save(vehiculoALogear);
   }
 }
