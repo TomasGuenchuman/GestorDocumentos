@@ -1,6 +1,10 @@
 // persona.service.ts
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { DataSource, Repository } from 'typeorm';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
+import { DataSource, Repository, Not } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Entidad } from '../entities/entidad.entity';
 import { TipoEntidad } from 'src/common/tipoEntidad.enum';
@@ -17,6 +21,17 @@ export class PersonaService {
   ) {}
 
   async crearPersona(dto: createPersonaDTO) {
+    // 1. Validación de Negocio: El DNI debe ser único
+    const personaExistente = await this.personaRepository.findOne({
+      where: { dni: dto.dni },
+    });
+
+    if (personaExistente) {
+      throw new BadRequestException(
+        `Ya existe una persona registrada con el DNI ${dto.dni}`,
+      );
+    }
+
     const queryRunner = this.dataSource.createQueryRunner();
 
     await queryRunner.connect();
@@ -54,15 +69,43 @@ export class PersonaService {
     id: number,
     updatePersonaDto: UpdatePersonaDto,
   ): Promise<Persona> {
-    const persona = await this.personaRepository.preload({
+    // 1. Verificar primero si la persona a actualizar realmente existe en DB
+    const personaExistente = await this.personaRepository.findOne({
+      where: { id },
+    });
+    if (!personaExistente) {
+      throw new NotFoundException(`No existe una persona con id ${id}`);
+    }
+
+    // 2. Validación de Negocio: Si está intentando cambiar el DNI, verificar que no lo use OTRA persona
+    if (updatePersonaDto.dni) {
+      const dniDuplicado = await this.personaRepository.findOne({
+        where: {
+          dni: updatePersonaDto.dni,
+          id: Not(id), // Excluimos a la persona actual de la búsqueda
+        },
+      });
+
+      if (dniDuplicado) {
+        throw new BadRequestException(
+          `El DNI ${updatePersonaDto.dni} ya está asignado a otra persona`,
+        );
+      }
+    }
+
+    // 3. Aplicar los cambios parciales con preload
+    const personaALogear = await this.personaRepository.preload({
       id,
       ...updatePersonaDto,
     });
 
-    if (!persona) {
-      throw new NotFoundException(`No existe una persona con id ${id}`);
+    // 4. Salvaguarda para TypeScript (Type Narrowing) evitando errores de asignación por 'undefined'
+    if (!personaALogear) {
+      throw new NotFoundException(
+        `No se pudo precargar la persona con id ${id}`,
+      );
     }
 
-    return this.personaRepository.save(persona);
+    return this.personaRepository.save(personaALogear);
   }
 }
