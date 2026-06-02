@@ -1,17 +1,5 @@
 // src/personas/dto/update-persona.dto.ts
+import { PartialType } from '@nestjs/swagger';
+import { createPersonaDTO } from './createPersonaDTO.dto'; // Ajusta la ruta si es necesario
 
-import { IsOptional, IsString } from 'class-validator';
-
-export class UpdatePersonaDto {
-  @IsOptional()
-  @IsString()
-  nombre?: string;
-
-  @IsOptional()
-  @IsString()
-  apellido?: string;
-
-  @IsOptional()
-  @IsString()
-  dni?: string;
-}
+export class UpdatePersonaDto extends PartialType(createPersonaDTO) {}
