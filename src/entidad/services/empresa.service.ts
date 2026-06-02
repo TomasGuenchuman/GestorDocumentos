@@ -1,5 +1,9 @@
 // persona.service.ts
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+} from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { Entidad } from '../entities/entidad.entity';
 import { TipoEntidad } from 'src/common/tipoEntidad.enum';
@@ -7,8 +11,8 @@ import { Empresa } from '../entities/empresa.entity';
 import { createEmpresaDTO } from '../dto/createEmpresaDTO.dto';
 import { UpdateEmpresaDto } from '../dto/UpdateEmpresaDto.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { NotFoundException } from '@nestjs/common';
+import { Repository, Not } from 'typeorm';
+
 @Injectable()
 export class EmpresaService {
   constructor(
@@ -18,6 +22,17 @@ export class EmpresaService {
   ) {}
 
   async crearEmpresa(dto: createEmpresaDTO) {
+    // 1. Validación de Negocio: El CUIT debe ser único
+    const empresaExistente = await this.empresaRepository.findOne({
+      where: { cuit: dto.cuit },
+    });
+
+    if (empresaExistente) {
+      throw new BadRequestException(
+        `Ya existe una empresa registrada con el CUIT ${dto.cuit}`,
+      );
+    }
+
     const queryRunner = this.dataSource.createQueryRunner();
 
     await queryRunner.connect();
@@ -54,15 +69,43 @@ export class EmpresaService {
     id: number,
     updateEmpresaDto: UpdateEmpresaDto,
   ): Promise<Empresa> {
-    const empresa = await this.empresaRepository.preload({
+    // 1. Verificar primero si la empresa a actualizar realmente existe
+    const empresaExistente = await this.empresaRepository.findOne({
+      where: { id },
+    });
+    if (!empresaExistente) {
+      throw new NotFoundException(`No existe una empresa con id ${id}`);
+    }
+
+    // 2. Validación de Negocio: Si está intentando cambiar el CUIT, verificar que no lo use OTRA empresa
+    if (updateEmpresaDto.cuit) {
+      const cuitDuplicado = await this.empresaRepository.findOne({
+        where: {
+          cuit: updateEmpresaDto.cuit,
+          id: Not(id), // Excluimos a la empresa actual de la búsqueda
+        },
+      });
+
+      if (cuitDuplicado) {
+        throw new BadRequestException(
+          `El CUIT ${updateEmpresaDto.cuit} ya está asignado a otra empresa`,
+        );
+      }
+    }
+
+    // 3. Aplicar los cambios parciales con preload
+    const empresaALogear = await this.empresaRepository.preload({
       id,
       ...updateEmpresaDto,
     });
 
-    if (!empresa) {
-      throw new NotFoundException(`No existe una empresa con id ${id}`);
+    // 4. ¡LA SOLUCIÓN! Añadimos una salvaguarda para TypeScript
+    if (!empresaALogear) {
+      throw new NotFoundException(
+        `No se pudo precargar la empresa con id ${id}`,
+      );
     }
 
-    return this.empresaRepository.save(empresa);
+    return this.empresaRepository.save(empresaALogear);
   }
 }
