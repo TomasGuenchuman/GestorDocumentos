@@ -34,8 +34,6 @@ export class createVehiculoDTO {
   })
   @IsString({ message: 'El modelo debe ser un texto' })
   @IsNotEmpty({ message: 'El modelo es obligatorio' })
-  @Matches(/^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s]+$/, {
-    message: 'El modelo solo debe contener letras, números y espacios',
-  })
+
   modelo: string;
 }
