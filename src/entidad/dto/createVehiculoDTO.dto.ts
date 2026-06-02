@@ -13,7 +13,7 @@ export class createVehiculoDTO {
     description: 'Patente o matrícula del vehículo (Máximo 10 caracteres)',
     example: 'AF123JK',
   })
-@Transform(({ value }: { value: string }) =>
+  @Transform(({ value }: { value: string }) =>
     typeof value === 'string' ? value.toUpperCase().trim() : value,
   )
   @IsString({ message: 'La patente debe ser una cadena de texto' })

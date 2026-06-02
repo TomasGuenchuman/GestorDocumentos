@@ -5,6 +5,8 @@ import {
   Body,
   Param,
   ParseIntPipe,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 
 import { CategoriaService } from '../services/categoria.service';
@@ -17,6 +19,7 @@ export class CategoriaController {
 
   // POST /categorias
   @Post()
+  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
   async create(@Body() dto: CreateCategoriaDTO): Promise<Categoria> {
     return await this.categoriaService.create(dto);
   }
