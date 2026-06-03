@@ -58,4 +58,13 @@ export class DocumentoController {
   ) {
     return this.documentoService.update(id, updateDocumentoDto);
   }
+
+  // GET /documentos/existe-relacion/:categoriaId/:entidadId
+  @Get('existe-relacion/:categoriaId/:entidadId')
+  async existeRelacion(
+    @Param('categoriaId', ParseIntPipe) categoriaId: number,
+    @Param('entidadId', ParseIntPipe) entidadId: number,
+  ): Promise<boolean> {
+    return await this.documentoService.existeRelacion(categoriaId, entidadId);
+  }
 }
