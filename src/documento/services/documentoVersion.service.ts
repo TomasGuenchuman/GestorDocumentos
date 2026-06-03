@@ -10,6 +10,7 @@ import { Repository } from 'typeorm';
 import { DocumentoVersion } from '../entities/documentoVersion.entity';
 import { Documento } from '../entities/documento.entity';
 import { CreateDocumentoVersionDTO } from '../dto/createDocumentoVersion.dto';
+import { CreateDocumentoVersionCustomDTO } from '../dto/createDocumentoVersionCustom.dto';
 import { DocumentoService } from './documento.service';
 
 @Injectable()
@@ -25,70 +26,93 @@ export class DocumentoVersionService {
   ) {}
 
   async create(
-    dto: CreateDocumentoVersionDTO,
-    categoriaId?: number,
-    entidadId?: number,
-    requiereVencimiento?: boolean,
+    dto: CreateDocumentoVersionDTO | CreateDocumentoVersionCustomDTO,
   ): Promise<DocumentoVersion> {
     let documento: Documento | null = null;
 
-    // 2. Si se envían los parámetros opcionales, manejamos la creación o búsqueda
-    if (categoriaId && entidadId) {
+    /*
+    CASO 1:
+    Viene el DTO custom:
+    {
+      url,
+      categoriaId,
+      entidadId,
+      requiereVencimiento?,
+      fecha_vencimiento?
+    }
+  */
+    if ('categoriaId' in dto && 'entidadId' in dto) {
       const existeRelacion = await this.documentoService.existeRelacion(
-        categoriaId,
-        entidadId,
+        dto.categoriaId,
+        dto.entidadId,
       );
 
       if (!existeRelacion) {
-        // Usamos el método create de DocumentoService
         documento = await this.documentoService.create({
-          categoriaId,
-          entidadId,
-          // Inferimos el vencimiento si no se pasa explícitamente, o usamos el valor de la nueva versión
-          requiere_vencimiento: requiereVencimiento ?? !!dto.fecha_vencimiento,
+          categoriaId: dto.categoriaId,
+          entidadId: dto.entidadId,
+
+          // OJO: ajustá el nombre según tu DTO de DocumentoService.
+          // Si tu campo se llama requiere_vencimiento, dejalo así.
+          requiere_vencimiento:
+            dto.requiereVencimiento ?? !!dto.fecha_vencimiento,
         });
       } else {
-        // Si ya existe la relación, buscamos el documento para poder asignarlo a la versión
         documento = await this.documentoRepository.findOne({
           where: {
-            categoria: { id: categoriaId },
-            entidad: { id: entidadId },
+            categoria: { id: dto.categoriaId },
+            entidad: { id: dto.entidadId },
+          },
+          relations: {
+            categoria: true,
+            entidad: true,
           },
         });
       }
-    } else if (dto.documentoId) {
-      // 3. Flujo original: si no hay parámetros opcionales, buscamos por el ID del DTO
+    } else if ('documentoId' in dto) {
+      /*
+    CASO 2:
+    Viene el DTO normal:
+    {
+      url,
+      documentoId,
+      fecha_vencimiento?
+    }
+  */
       documento = await this.documentoRepository.findOne({
         where: { id: dto.documentoId },
       });
+    } else {
+      /*
+    Si no entró en ninguno de los dos casos,
+    el body no tiene la forma esperada.
+  */
+      throw new BadRequestException(
+        'Debe enviar documentoId o categoriaId + entidadId',
+      );
     }
 
-    // Validamos que hayamos conseguido un documento por una vía u otra
     if (!documento) {
       throw new NotFoundException(
         `No se pudo encontrar ni crear el documento asociado.`,
       );
     }
 
-    // 4. Lógica para buscar la versión anterior
     const ultimaVersion = await this.documentoVersionRepository.findOne({
       where: {
-        documento: { id: documento.id }, // Usamos el ID del documento obtenido dinámicamente
+        documento: { id: documento.id },
       },
       order: {
-        version: 'DESC', // NOTA: Agregué este ordenamiento para asegurar que siempre traiga la versión más alta y no una aleatoria.
+        version: 'DESC',
       },
     });
 
-    if (documento.requiere_vencimiento) {
-      if (!dto.fecha_vencimiento) {
-        throw new BadRequestException(
-          `El documento ${documento.id} requiere una fecha de vencimiento`,
-        );
-      }
+    if (documento.requiere_vencimiento && !dto.fecha_vencimiento) {
+      throw new BadRequestException(
+        `El documento ${documento.id} requiere una fecha de vencimiento`,
+      );
     }
 
-    // 5. Creación normal de la versión
     const documentoVersion = this.documentoVersionRepository.create({
       fecha_vencimiento: documento.requiere_vencimiento
         ? dto.fecha_vencimiento
@@ -100,6 +124,7 @@ export class DocumentoVersionService {
 
     return this.documentoVersionRepository.save(documentoVersion);
   }
+
   async findAll(): Promise<DocumentoVersion[]> {
     return this.documentoVersionRepository.find({
       relations: {

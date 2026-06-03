@@ -10,7 +10,16 @@ import {
 } from '@nestjs/common';
 import { DocumentoVersionService } from '../services/documentoVersion.service';
 import { CreateDocumentoVersionDTO } from '../dto/createDocumentoVersion.dto';
+import { CreateDocumentoVersionCustomDTO } from '../dto/createDocumentoVersionCustom.dto';
 
+import {
+  ApiBody,
+  ApiExtraModels,
+  ApiTags,
+  getSchemaPath,
+} from '@nestjs/swagger';
+
+@ApiExtraModels(CreateDocumentoVersionDTO, CreateDocumentoVersionCustomDTO)
 @Controller('documento-version')
 export class DocumentoVersionController {
   constructor(
@@ -18,7 +27,39 @@ export class DocumentoVersionController {
   ) {}
 
   @Post()
-  create(@Body() dto: CreateDocumentoVersionDTO) {
+  @ApiBody({
+    description:
+      'Crear una versión usando un documento existente o usando categoría + entidad',
+    schema: {
+      oneOf: [
+        { $ref: getSchemaPath(CreateDocumentoVersionDTO) },
+        { $ref: getSchemaPath(CreateDocumentoVersionCustomDTO) },
+      ],
+    },
+    examples: {
+      conDocumentoExistente: {
+        summary: 'Documento existente',
+        value: {
+          url: 'uploads/documentos/archivo.pdf',
+          documentoId: 1,
+          fecha_vencimiento: '2026-12-31T23:59:59.000Z',
+        },
+      },
+      conCategoriaYEntidad: {
+        summary: 'Sin documento Existente',
+        value: {
+          url: 'uploads/documentos/archivo.pdf',
+          categoriaId: 2,
+          entidadId: 5,
+          requiereVencimiento: true,
+          fecha_vencimiento: '2026-12-31T23:59:59.000Z',
+        },
+      },
+    },
+  })
+  create(
+    @Body() dto: CreateDocumentoVersionDTO | CreateDocumentoVersionCustomDTO,
+  ) {
     return this.documentoVersionService.create(dto);
   }
 
