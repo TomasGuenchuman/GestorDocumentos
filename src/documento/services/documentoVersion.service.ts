@@ -27,6 +27,7 @@ export class DocumentoVersionService {
 
   async create(
     dto: CreateDocumentoVersionDTO | CreateDocumentoVersionCustomDTO,
+    fileUrl: string,
   ): Promise<DocumentoVersion> {
     let documento: Documento | null = null;
 
@@ -118,7 +119,7 @@ export class DocumentoVersionService {
         ? dto.fecha_vencimiento
         : null,
       version: ultimaVersion ? ultimaVersion.version + 1 : 1,
-      url: dto.url,
+      url: fileUrl,
       documento,
     });
 

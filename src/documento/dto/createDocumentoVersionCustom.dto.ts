@@ -1,46 +1,34 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import {
-  IsInt,
-  IsOptional,
-  IsString,
-  IsBoolean,
-  IsDateString,
-} from 'class-validator';
+import { IsInt, IsOptional, IsBoolean, IsDateString } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 export class CreateDocumentoVersionCustomDTO {
-  @ApiProperty({
-    description: 'URL del archivo de la versión',
-    example: 'https://tu-storage.com/archivo.pdf',
-  })
-  @IsString()
-  url: string;
+  // Eliminamos el campo 'url' de aquí.
 
   @ApiProperty({
-    description: 'ID de la categoría para buscar o crear el documento',
-    example: 2,
+    type: 'string',
+    format: 'binary',
+    description: 'Archivo PDF del documento',
   })
+  file: any; // Esto es solo para que Swagger entienda que hay un archivo.
+
+  @ApiProperty({ example: 2 })
+  @Transform(({ value }) => parseInt(value, 10)) // Multer manda todo como string, hay que parsearlo
   @IsInt()
   categoriaId: number;
 
-  @ApiProperty({
-    description: 'ID de la entidad para buscar o crear el documento',
-    example: 5,
-  })
+  @ApiProperty({ example: 5 })
+  @Transform(({ value }) => parseInt(value, 10))
   @IsInt()
   entidadId: number;
 
-  @ApiPropertyOptional({
-    description: 'Define si el documento requiere vencimiento',
-    example: true,
-  })
+  @ApiPropertyOptional({ example: true })
+  @Transform(({ value }) => value === 'true')
   @IsOptional()
   @IsBoolean()
   requiereVencimiento?: boolean;
 
-  @ApiPropertyOptional({
-    description: 'Fecha de vencimiento',
-    example: '2026-12-31T23:59:59.000Z',
-  })
+  @ApiPropertyOptional({ example: '2026-12-31T23:59:59.000Z' })
   @IsOptional()
   @IsDateString()
   fecha_vencimiento?: string;
