@@ -209,4 +209,25 @@ export class DocumentoService {
       where: whereClause,
     });
   }
+
+  async findByCategoriaAndEntidad(
+    categoriaId: number,
+    entidadId: number,
+  ): Promise<Documento> {
+    const documento = await this.documentoRepository.findOne({
+      where: {
+        categoria: { id: categoriaId },
+        entidad: { id: entidadId },
+      },
+      relations: ['categoria', 'entidad'],
+    });
+
+    if (!documento) {
+      throw new NotFoundException(
+        `No existe documento para la categoría ${categoriaId} y la entidad ${entidadId}`,
+      );
+    }
+
+    return documento;
+  }
 }

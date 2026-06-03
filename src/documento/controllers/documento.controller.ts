@@ -67,4 +67,15 @@ export class DocumentoController {
   ): Promise<boolean> {
     return await this.documentoService.existeRelacion(categoriaId, entidadId);
   }
+
+  @Get('buscar/:categoriaId/:entidadId')
+  async findByCategoriaAndEntidad(
+    @Param('categoriaId', ParseIntPipe) categoriaId: number,
+    @Param('entidadId', ParseIntPipe) entidadId: number,
+  ): Promise<Documento> {
+    return await this.documentoService.findByCategoriaAndEntidad(
+      categoriaId,
+      entidadId,
+    );
+  }
 }
