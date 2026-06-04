@@ -235,28 +235,48 @@ export class DocumentoService {
   }
 
   async findAllWithLatestVersion(): Promise<DocumentoConUltimaVersion[]> {
-    const documentos = await this.documentoRepository.find({
-      relations: {
-        categoria: true,
-        entidad: true,
-        versiones: true,
-      },
-      order: {
-        id: 'ASC',
-        versiones: {
-          version: 'DESC',
-          id: 'DESC',
+    const [documentos, entidades] = await Promise.all([
+      this.documentoRepository.find({
+        relations: {
+          categoria: true,
+          entidad: true,
+          versiones: true,
         },
-      },
-    });
+        order: {
+          id: 'ASC',
+          versiones: {
+            version: 'DESC',
+            id: 'DESC',
+          },
+        },
+      }),
+
+      // Usa aquí el nombre real de tu método especial de entidades
+      this.entidadService.findAll(),
+    ]);
+
+    const entidadesPorId = new Map(
+      entidades.map((entidad) => [entidad.id, entidad]),
+    );
 
     return documentos.map((documento) => {
       const { versiones, ...documentoSinVersiones } = documento;
 
       const ultimaVersion = versiones?.[0] ?? null;
 
+      const entidadCompleta = entidadesPorId.get(documento.entidad.id);
+
       return {
         ...documentoSinVersiones,
+
+        entidad: entidadCompleta
+          ? {
+              id: entidadCompleta.id,
+              tipo: entidadCompleta.tipo,
+              detalle: entidadCompleta.detalle,
+            }
+          : documento.entidad,
+
         ultimaVersion: ultimaVersion
           ? {
               id: ultimaVersion.id,

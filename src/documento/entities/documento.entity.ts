@@ -15,8 +15,19 @@ export type DocumentoConUltimaVersion = {
   id: number;
   nombre: string;
   requiere_vencimiento: boolean;
-  categoria: unknown;
-  entidad: unknown;
+
+  categoria: {
+    id: number;
+    nombre: string;
+    tipo: string;
+  };
+
+  entidad: {
+    id: number;
+    tipo: string;
+    detalle?: unknown;
+  };
+
   ultimaVersion: {
     id: number;
     fecha_vencimiento: Date | null;
