@@ -6,7 +6,10 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Not, FindOptionsWhere } from 'typeorm';
 
-import { Documento } from '../entities/documento.entity';
+import {
+  Documento,
+  DocumentoConUltimaVersion,
+} from '../entities/documento.entity';
 import { CreateDocumentoDTO } from '../dto/createDocumentoDTO.dto';
 import { Categoria } from '../entities/categoria.entity';
 import { Entidad } from 'src/entidad/entities/entidad.entity';
@@ -229,5 +232,40 @@ export class DocumentoService {
     }
 
     return documento;
+  }
+
+  async findAllWithLatestVersion(): Promise<DocumentoConUltimaVersion[]> {
+    const documentos = await this.documentoRepository.find({
+      relations: {
+        categoria: true,
+        entidad: true,
+        versiones: true,
+      },
+      order: {
+        id: 'ASC',
+        versiones: {
+          version: 'DESC',
+          id: 'DESC',
+        },
+      },
+    });
+
+    return documentos.map((documento) => {
+      const { versiones, ...documentoSinVersiones } = documento;
+
+      const ultimaVersion = versiones?.[0] ?? null;
+
+      return {
+        ...documentoSinVersiones,
+        ultimaVersion: ultimaVersion
+          ? {
+              id: ultimaVersion.id,
+              fecha_vencimiento: ultimaVersion.fecha_vencimiento ?? null,
+              version: ultimaVersion.version,
+              url: ultimaVersion.url,
+            }
+          : null,
+      };
+    });
   }
 }

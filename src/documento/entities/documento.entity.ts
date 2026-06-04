@@ -5,9 +5,25 @@ import {
   ManyToOne,
   JoinColumn,
   Unique,
+  OneToMany,
 } from 'typeorm';
 import { Categoria } from './categoria.entity';
 import { Entidad } from 'src/entidad/entities/entidad.entity';
+import { DocumentoVersion } from './documentoVersion.entity';
+
+export type DocumentoConUltimaVersion = {
+  id: number;
+  nombre: string;
+  requiere_vencimiento: boolean;
+  categoria: unknown;
+  entidad: unknown;
+  ultimaVersion: {
+    id: number;
+    fecha_vencimiento: Date | null;
+    version: number;
+    url: string;
+  } | null;
+};
 
 @Entity()
 @Unique(['categoria', 'entidad'])
@@ -37,4 +53,10 @@ export class Documento {
   @ManyToOne(() => Entidad, { nullable: false })
   @JoinColumn({ name: 'entidad_id' })
   entidad!: Entidad;
+
+  @OneToMany(
+    () => DocumentoVersion,
+    (documentoVersion) => documentoVersion.documento,
+  )
+  versiones!: DocumentoVersion[];
 }

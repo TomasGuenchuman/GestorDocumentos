@@ -34,8 +34,9 @@ export class DocumentoVersionController {
   ) {}
 
   @Post()
-@ApiBody({
-    description: 'Subir una nueva versión de documento. Puede asociarse a un documentoId existente o crear la relación usando categoriaId + entidadId.',
+  @ApiBody({
+    description:
+      'Subir una nueva versión de documento. Puede asociarse a un documentoId existente o crear la relación usando categoriaId + entidadId.',
     type: CreateDocumentoVersionCustomDTO, // 👈 Pasamos el DTO unificado directamente aquí
   })
   @ApiConsumes('multipart/form-data') // ⚠️ Fundamental para aceptar archivos
