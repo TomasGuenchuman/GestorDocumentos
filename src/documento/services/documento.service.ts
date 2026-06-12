@@ -288,4 +288,59 @@ export class DocumentoService {
       };
     });
   }
+
+  async findAllWithLatestVersionByEntidadId(
+    entidadId: number,
+  ): Promise<DocumentoConUltimaVersion[]> {
+    const [documentos, entidadCompleta] = await Promise.all([
+      this.documentoRepository.find({
+        where: {
+          entidad: {
+            id: entidadId,
+          },
+        },
+        relations: {
+          categoria: true,
+          entidad: true,
+          versiones: true,
+        },
+        order: {
+          id: 'ASC',
+          versiones: {
+            version: 'DESC',
+            id: 'DESC',
+          },
+        },
+      }),
+
+      this.entidadService.findOne(entidadId),
+    ]);
+
+    return documentos.map((documento) => {
+      const { versiones, ...documentoSinVersiones } = documento;
+
+      const ultimaVersion = versiones?.[0] ?? null;
+
+      return {
+        ...documentoSinVersiones,
+
+        entidad: entidadCompleta
+          ? {
+              id: entidadCompleta.id,
+              tipo: entidadCompleta.tipo,
+              detalle: entidadCompleta.detalle,
+            }
+          : documento.entidad,
+
+        ultimaVersion: ultimaVersion
+          ? {
+              id: ultimaVersion.id,
+              fecha_vencimiento: ultimaVersion.fecha_vencimiento ?? null,
+              version: ultimaVersion.version,
+              url: ultimaVersion.url,
+            }
+          : null,
+      };
+    });
+  }
 }
