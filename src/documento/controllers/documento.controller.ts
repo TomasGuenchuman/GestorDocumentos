@@ -38,12 +38,6 @@ export class DocumentoController {
     return await this.documentoService.findAll();
   }
 
-  // GET /documentos/:id
-  @Get(':id')
-  async findOne(@Param('id', ParseIntPipe) id: number): Promise<Documento> {
-    return await this.documentoService.findOne(id);
-  }
-
   @Patch(':id')
   @UsePipes(
     new ValidationPipe({
@@ -77,5 +71,23 @@ export class DocumentoController {
       categoriaId,
       entidadId,
     );
+  }
+
+  @Get('con-ultima-version')
+  findAllWithLatestVersion() {
+    return this.documentoService.findAllWithLatestVersion();
+  }
+
+  @Get('entidad/:entidadId/with-latest')
+  findAllWithLatestVersionByEntidadId(
+    @Param('entidadId', ParseIntPipe) entidadId: number,
+  ) {
+    return this.documentoService.findAllWithLatestVersionByEntidadId(entidadId);
+  }
+
+  // GET /documentos/:id
+  @Get(':id')
+  async findOne(@Param('id', ParseIntPipe) id: number): Promise<Documento> {
+    return await this.documentoService.findOne(id);
   }
 }
