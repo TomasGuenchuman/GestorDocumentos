@@ -30,8 +30,8 @@ export class DocumentoVersion {
   })
   url!: string;
 
-  @ManyToOne(() => Documento, {
-    nullable: false,
+  @ManyToOne(() => Documento, (documento) => documento.versiones, {
+    onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'documento_id' })
   documento!: Documento;

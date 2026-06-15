@@ -6,7 +6,10 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Not, FindOptionsWhere } from 'typeorm';
 
-import { Documento } from '../entities/documento.entity';
+import {
+  Documento,
+  DocumentoConUltimaVersion,
+} from '../entities/documento.entity';
 import { CreateDocumentoDTO } from '../dto/createDocumentoDTO.dto';
 import { Categoria } from '../entities/categoria.entity';
 import { Entidad } from 'src/entidad/entities/entidad.entity';
@@ -229,5 +232,115 @@ export class DocumentoService {
     }
 
     return documento;
+  }
+
+  async findAllWithLatestVersion(): Promise<DocumentoConUltimaVersion[]> {
+    const [documentos, entidades] = await Promise.all([
+      this.documentoRepository.find({
+        relations: {
+          categoria: true,
+          entidad: true,
+          versiones: true,
+        },
+        order: {
+          id: 'ASC',
+          versiones: {
+            version: 'DESC',
+            id: 'DESC',
+          },
+        },
+      }),
+
+      // Usa aquí el nombre real de tu método especial de entidades
+      this.entidadService.findAll(),
+    ]);
+
+    const entidadesPorId = new Map(
+      entidades.map((entidad) => [entidad.id, entidad]),
+    );
+
+    return documentos.map((documento) => {
+      const { versiones, ...documentoSinVersiones } = documento;
+
+      const ultimaVersion = versiones?.[0] ?? null;
+
+      const entidadCompleta = entidadesPorId.get(documento.entidad.id);
+
+      return {
+        ...documentoSinVersiones,
+
+        entidad: entidadCompleta
+          ? {
+              id: entidadCompleta.id,
+              tipo: entidadCompleta.tipo,
+              detalle: entidadCompleta.detalle,
+            }
+          : documento.entidad,
+
+        ultimaVersion: ultimaVersion
+          ? {
+              id: ultimaVersion.id,
+              fecha_vencimiento: ultimaVersion.fecha_vencimiento ?? null,
+              version: ultimaVersion.version,
+              url: ultimaVersion.url,
+            }
+          : null,
+      };
+    });
+  }
+
+  async findAllWithLatestVersionByEntidadId(
+    entidadId: number,
+  ): Promise<DocumentoConUltimaVersion[]> {
+    const [documentos, entidadCompleta] = await Promise.all([
+      this.documentoRepository.find({
+        where: {
+          entidad: {
+            id: entidadId,
+          },
+        },
+        relations: {
+          categoria: true,
+          entidad: true,
+          versiones: true,
+        },
+        order: {
+          id: 'ASC',
+          versiones: {
+            version: 'DESC',
+            id: 'DESC',
+          },
+        },
+      }),
+
+      this.entidadService.findOne(entidadId),
+    ]);
+
+    return documentos.map((documento) => {
+      const { versiones, ...documentoSinVersiones } = documento;
+
+      const ultimaVersion = versiones?.[0] ?? null;
+
+      return {
+        ...documentoSinVersiones,
+
+        entidad: entidadCompleta
+          ? {
+              id: entidadCompleta.id,
+              tipo: entidadCompleta.tipo,
+              detalle: entidadCompleta.detalle,
+            }
+          : documento.entidad,
+
+        ultimaVersion: ultimaVersion
+          ? {
+              id: ultimaVersion.id,
+              fecha_vencimiento: ultimaVersion.fecha_vencimiento ?? null,
+              version: ultimaVersion.version,
+              url: ultimaVersion.url,
+            }
+          : null,
+      };
+    });
   }
 }
