@@ -2,7 +2,7 @@
 import { useState } from "react";
 
 export default function Sidebar() {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
   return (
     <aside
       onMouseEnter={() => setIsOpen(true)}

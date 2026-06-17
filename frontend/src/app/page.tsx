@@ -1,8 +1,33 @@
+import DocumentStatusCard from "@/components/ui/DocumentsStatusCard";
 export default function Home() {
   return (
-    <main className="p-8">
-      <h1 className="text-3xl font-bold">Frontend Next.js</h1>
-      <p className="mt-2 text-gray-600">Proyecto conectado a una API NestJS.</p>
-    </main>
+    <>
+      <div className="flex flex-row justify-around">
+        <DocumentStatusCard
+          status="vencido"
+          title="Vencidos"
+          count={10}
+          subtext="Requieren accion inmediata"
+        />
+        <DocumentStatusCard
+          status="por-vencer"
+          title="Proximos a vencer"
+          count={10}
+          subtext="Dentro de los proximos 30 dias"
+        />
+        <DocumentStatusCard
+          status="vigente"
+          title="Vigentes"
+          count={10}
+          subtext="Documentos al dia"
+        />
+      </div>
+
+      <div>
+        CONTENEDOR
+        <div>CALENDARIO</div>
+        <div>PRORIDADES</div>
+      </div>
+    </>
   );
 }
