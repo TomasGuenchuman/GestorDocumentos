@@ -20,7 +20,7 @@ export default function RootLayout({
         <Sidebar />
         {/* 2. EL CONTENIDO PRINCIPAL */}
         {/* flex-1 hace que ocupe todo el ancho sobrante a la derecha del sidebar */}
-        <main className="flex-1 flex flex-col p-8">
+        <main className="flex-1 flex flex-col">
           {/* Aquí se inyectan tus páginas y sus diferentes secciones */}
           {children}
         </main>

@@ -42,7 +42,7 @@ export default function DocumentStatusCard({
 
   return (
     <div
-      className={`bg-white rounded-lg border p-5 flex flex-col justify-between shadow-sm min-w-[200px] h-[140px] ${currentStyle.wrapperClass}`}
+      className={`bg-white rounded-lg border p-5 flex flex-col justify-between shadow-sm flex-1 min-w-[200px] max-w-[400px] h-[140px] ${currentStyle.wrapperClass}`}
     >
       {/* Cabecera: Icono y Título */}
       <div className="flex justify-between items-start w-full">
