@@ -19,19 +19,21 @@ export default function DocumentStatusCard({
   // Diccionario de configuración visual según el estado
   const styleConfig = {
     vigente: {
-      wrapperClass: "border-gray-200", // Borde normal
-      icon: <CheckCircle2 className="text-green-500" size={24} />,
+      wrapperClass: "border-l-4 border-l-green-500",
+      textClass: "text-green-700 font-medium",
       countClass: "text-slate-900",
       subtextClass: "text-gray-500",
     },
     vencido: {
-      wrapperClass: "border-gray-200 border-l-4 border-l-rose-600", // Borde grueso izquierdo
+      wrapperClass: "border-l-4 border-l-red-500",
+      textClass: "text-red-600 font-semibold",
       icon: <AlertCircle className="text-rose-600" size={24} />,
       countClass: "text-rose-600",
       subtextClass: "text-rose-500 font-medium text-xs",
     },
     "por-vencer": {
-      wrapperClass: "border-gray-200", // Borde normal
+      wrapperClass: "border-l-4 border-l-orange-500",
+      textClass: "text-orange-600 font-medium",
       icon: <AlertTriangle className="text-amber-500" size={24} />,
       countClass: "text-slate-900",
       subtextClass: "text-amber-600 font-medium text-xs",
@@ -58,7 +60,9 @@ export default function DocumentStatusCard({
 
         {/* Renderizado condicional del subtexto */}
         {subtext && (
-          <p className={`mt-1 ${currentStyle.subtextClass}`}>{subtext}</p>
+          <p className={`text-xs md:text-sm mt-1 ${currentStyle.textClass}`}>
+            {subtext}
+          </p>
         )}
       </div>
     </div>
