@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import Sidebar from "@/components/layout/Sidebar";
 
 export const metadata: Metadata = {
   title: "Gestion Documentos",
@@ -16,14 +15,7 @@ export default function RootLayout({
     <html lang="es">
       {/* Usamos flex de forma horizontal para que el sidebar quede al lado del contenido */}
       <body className="antialiased min-h-dvh flex bg-slate-50 text-slate-900">
-        {/* 1. EL SIDEBAR (Fuera del main) */}
-        <Sidebar />
-        {/* 2. EL CONTENIDO PRINCIPAL */}
-        {/* flex-1 hace que ocupe todo el ancho sobrante a la derecha del sidebar */}
-        <main className="flex-1 flex flex-col">
-          {/* Aquí se inyectan tus páginas y sus diferentes secciones */}
-          {children}
-        </main>
+        {children}
       </body>
     </html>
   );

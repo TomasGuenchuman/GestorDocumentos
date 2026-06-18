@@ -3,12 +3,12 @@ import DashboardCardsLayout from "@/features/dashboard/components/DashboardCards
 import Button from "@/components/ui/Button";
 import { Plus } from "lucide-react";
 import { Suspense } from "react";
-import DashboardSkeleton from "../features/dashboard/components/DashboardSkeleton";
+import DashboardSkeleton from "@/features/dashboard/components/DashboardSkeleton";
 
 async function fetchDashboardData() {
   // await prisma.document.findMany(...)
-  // Simulamos un retraso artificial de 2 segundos para ver el efecto
-  await new Promise((resolve) => setTimeout(resolve, 2000));
+  // Simulamos un retraso artificial de 1 segundos para ver el efecto
+  await new Promise((resolve) => setTimeout(resolve, 1000));
 
   return {
     vencidos: 12,
