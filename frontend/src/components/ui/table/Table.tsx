@@ -1,5 +1,3 @@
-"use client";
-
 import {
   getHeaderLabel,
   getHeaderAlign,
@@ -9,9 +7,8 @@ import {
   EntityCell,
   StatusBadge,
   DateCell,
-  PdfCell,
-  ActionsCell,
 } from "./table.components";
+import { PdfClientCell, ActionsClientCell } from "./ClientCells";
 
 type EntityType = "persona" | "empresa" | "vehiculo";
 export type DocumentStatus = "vigente" | "vencido" | "por vencer";
@@ -54,9 +51,6 @@ type TableProps = {
   rows: DocumentTableRow[];
   emptyMessage?: string;
   className?: string;
-
-  onPdfClick?: (row: DocumentTableRow) => void;
-  onActionClick?: (row: DocumentTableRow) => void;
 };
 
 const DEFAULT_HEADERS: TableHeader[] = [
@@ -82,8 +76,6 @@ export default function Table({
   rows,
   emptyMessage = "No hay datos para mostrar.",
   className = "",
-  onPdfClick,
-  onActionClick,
 }: TableProps) {
   return (
     <div
@@ -154,14 +146,11 @@ export default function Table({
                   </td>
 
                   <td className="px-5 py-4 text-center align-middle">
-                    <PdfCell
-                      available={row.pdf.available}
-                      onClick={() => onPdfClick?.(row)}
-                    />
+                    <PdfClientCell row={row} />
                   </td>
 
                   <td className="px-5 py-4 text-center align-middle">
-                    <ActionsCell onClick={() => onActionClick?.(row)} />
+                    <ActionsClientCell row={row} />
                   </td>
                 </tr>
               ))
