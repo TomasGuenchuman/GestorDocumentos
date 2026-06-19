@@ -38,17 +38,17 @@ export function DocumentCell({ title, version }: DocumentTableRow["document"]) {
 
 export function EntityCell({ title, type }: DocumentTableRow["entity"]) {
   const entityConfig = {
-    person: {
+    persona: {
       icon: UserRound,
-      label: "Person",
+      label: "Persona",
     },
-    company: {
+    empresa: {
       icon: Building2,
-      label: "Company",
+      label: "Empresa",
     },
-    vehicle: {
+    vehiculo: {
       icon: Car,
-      label: "Vehicle",
+      label: "Vehiculo",
     },
   };
 
@@ -95,13 +95,11 @@ export function StatusBadge({ status }: { status: DocumentStatus }) {
 }
 
 export function DateCell({
-  emission,
   expiration,
   expired = false,
 }: DocumentTableRow["dates"]) {
   return (
     <div className="text-xs leading-5">
-      <p className="text-slate-800">{emission}</p>
       <p className={expired ? "font-bold text-red-600" : "text-slate-800"}>
         {expiration}
       </p>

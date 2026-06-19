@@ -13,7 +13,7 @@ import {
   ActionsCell,
 } from "./table.components";
 
-type EntityType = "person" | "company" | "vehicle";
+type EntityType = "persona" | "empresa" | "vehiculo";
 export type DocumentStatus = "vigente" | "vencido" | "por vencer";
 
 export type TableHeader =
@@ -37,12 +37,9 @@ export type DocumentTableRow = {
     type: EntityType;
   };
 
-  category: string;
-
   status: DocumentStatus;
 
   dates: {
-    emission: string;
     expiration: string;
     expired?: boolean;
   };
@@ -65,12 +62,11 @@ type TableProps = {
 const DEFAULT_HEADERS: TableHeader[] = [
   "Documento",
   "Entidad",
-  "Categoría",
   {
     label: "Estado",
     align: "center",
   },
-  "Emisión / Venc.",
+  "Vencimiento",
   {
     label: "PDF",
     align: "center",
@@ -146,17 +142,12 @@ export default function Table({
                     />
                   </td>
 
-                  <td className="px-5 py-4 align-middle text-sm text-slate-800">
-                    {row.category}
-                  </td>
-
                   <td className="px-5 py-4 text-center align-middle">
                     <StatusBadge status={row.status} />
                   </td>
 
                   <td className="px-5 py-4 align-middle">
                     <DateCell
-                      emission={row.dates.emission}
                       expiration={row.dates.expiration}
                       expired={row.dates.expired}
                     />

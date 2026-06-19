@@ -10,12 +10,10 @@ const documents: DocumentTableRow[] = [
     },
     entity: {
       title: "Juan Pérez",
-      type: "person",
+      type: "persona",
     },
-    category: "Legal",
     status: "vigente",
     dates: {
-      emission: "15/01/2023",
       expiration: "15/01/2028",
     },
     pdf: {
@@ -30,12 +28,10 @@ const documents: DocumentTableRow[] = [
     },
     entity: {
       title: "Transporte Austral",
-      type: "company",
+      type: "empresa",
     },
-    category: "Operativa",
     status: "vencido",
     dates: {
-      emission: "10/10/2022",
       expiration: "10/10/2023",
       expired: true,
     },
@@ -51,12 +47,10 @@ const documents: DocumentTableRow[] = [
     },
     entity: {
       title: "AB123CD",
-      type: "vehicle",
+      type: "vehiculo",
     },
-    category: "Seguros",
     status: "vigente",
     dates: {
-      emission: "01/03/2024",
       expiration: "01/03/2025",
     },
     pdf: {
@@ -71,12 +65,10 @@ const documents: DocumentTableRow[] = [
     },
     entity: {
       title: "Logística Sur",
-      type: "company",
+      type: "empresa",
     },
-    category: "Fiscal",
     status: "vigente",
     dates: {
-      emission: "05/01/2024",
       expiration: "05/01/2025",
     },
     pdf: {
@@ -91,12 +83,10 @@ const documents: DocumentTableRow[] = [
     },
     entity: {
       title: "AC456EF",
-      type: "vehicle",
+      type: "vehiculo",
     },
-    category: "Técnica",
     status: "por vencer",
     dates: {
-      emission: "20/11/2023",
       expiration: "20/11/2024",
       expired: true,
     },
