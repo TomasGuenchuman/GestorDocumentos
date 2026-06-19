@@ -1,5 +1,7 @@
 "use client";
 import Table, { type DocumentTableRow } from "@/components/ui/table/Table";
+import Button from "@/components/ui/Button";
+import { Plus } from "lucide-react";
 
 const documents: DocumentTableRow[] = [
   {
@@ -99,17 +101,14 @@ const documents: DocumentTableRow[] = [
 export default function Documentos() {
   return (
     <div className="h-screen w-full flex flex-col overflow-hidden p-4 gap-4">
-      <header>GESTIOND E DOCUMENTOS - BOton CARgar Doucmento</header>
+      <header className="shrink-0 flex items-center justify-between px-2">
+        <h1 className="text-2xl font-bold text-slate-800">Documentos</h1>
+        <Button variant="primary" icon={<Plus size={18} />}>
+          Cargar Nuevo Documento
+        </Button>
+      </header>
       <div>FILTROS</div>
-      <Table
-        rows={documents}
-        onPdfClick={(row) => {
-          console.log("Abrir PDF:", row);
-        }}
-        onActionClick={(row) => {
-          console.log("Abrir acciones:", row);
-        }}
-      />
+      <Table rows={documents} />
     </div>
   );
 }

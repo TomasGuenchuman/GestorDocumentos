@@ -63,7 +63,7 @@ export default async function Dashboard() {
     <div className="h-screen w-full flex flex-col overflow-hidden p-4 gap-4">
       <header className="shrink-0 flex items-center justify-between px-2">
         <h1 className="text-2xl font-bold text-slate-800">
-          Dashboard Documentos
+          Dashboard Vencimientos
         </h1>
         <Button variant="primary" icon={<Plus size={18} />}>
           Cargar Nuevo Documento
