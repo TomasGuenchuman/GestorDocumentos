@@ -1,11 +1,11 @@
 import { CheckCircle2, AlertCircle, AlertTriangle } from "lucide-react";
-
+import { ReactNode } from "react";
 export type DocumentStatus = "vigente" | "vencido" | "por-vencer";
 
 interface DocumentStatusCardProps {
   status: DocumentStatus;
   title: string;
-  count: number;
+  count: number | ReactNode;
   subtext?: string;
   onclick?: () => void;
 }
@@ -20,6 +20,7 @@ export default function DocumentStatusCard({
   const styleConfig = {
     vigente: {
       wrapperClass: "border-l-4 border-l-green-500",
+      icon: <AlertCircle className="text-green-600" size={24} />,
       textClass: "text-green-700 font-medium",
       countClass: "text-slate-900",
       subtextClass: "text-gray-500",

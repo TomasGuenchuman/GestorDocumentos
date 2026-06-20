@@ -1,4 +1,11 @@
-import React from "react";
+import { ButtonHTMLAttributes, ReactNode } from "react";
+
+// 1. Definimos los tipos de las props específicas de tu componente
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  children?: ReactNode;
+  variant?: "primary" | "secondary" | "outline" | "danger";
+  icon?: ReactNode;
+}
 
 export default function Button({
   children,
@@ -6,7 +13,7 @@ export default function Button({
   className = "",
   icon,
   ...props
-}) {
+}: ButtonProps) {
   // Estilos base que comparten todos los botones
   const baseStyles =
     "inline-flex items-center justify-center rounded-lg text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none px-4 py-2.5";
