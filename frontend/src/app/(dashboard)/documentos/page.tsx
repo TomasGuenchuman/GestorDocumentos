@@ -1,8 +1,10 @@
 import Table from "@/components/ui/table/Table";
 import Button from "@/components/ui/Button";
 import { Plus } from "lucide-react";
+import FiltersBar from "@/features/documentos/components/FiltersBar";
 // datos MOCK
 import { documents } from "@/features/documentos/mook/documentos.mock";
+import { mockFilters } from "@/features/documentos/mook/filtro.mock";
 
 export default function Documentos() {
   return (
@@ -13,10 +15,8 @@ export default function Documentos() {
           Cargar Nuevo Documento
         </Button>
       </header>
-      <div className="flex flex-row">
-        <div>FILTROS</div>
-        <div>asdasdd</div>
-      </div>
+      <FiltersBar filters={mockFilters} />
+
       <Table rows={documents} />
     </div>
   );
