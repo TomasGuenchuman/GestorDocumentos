@@ -1,37 +1,52 @@
 export const mockFilters = [
   {
-    id: "entity",
-    label: "Entidad",
-    options: [
-      { label: "Entidad 1", value: "1" },
-      { label: "Entidad 2", value: "2" },
-      { label: "Entidad 3", value: "3" },
-    ],
-  },
-  {
-    id: "category",
-    label: "Categoría",
-    options: [
-      { label: "Categoría A", value: "a" },
-      { label: "Categoría B", value: "b" },
-    ],
-  },
-  {
     id: "status",
     label: "Estado",
     options: [
-      { label: "Activo", value: "active" },
-      { label: "Pendiente", value: "pending" },
-      { label: "Finalizado", value: "completed" },
+      {
+        label: "Vigente",
+        value: "vigente",
+      },
+      {
+        label: "Vencido",
+        value: "vencido",
+      },
+      {
+        label: "Por vencer",
+        value: "por vencer",
+      },
     ],
   },
   {
-    id: "expiration",
-    label: "Vencimiento",
+    id: "entity.type",
+    label: "Tipo de entidad",
     options: [
-      { label: "Hoy", value: "today" },
-      { label: "Esta semana", value: "week" },
-      { label: "Este mes", value: "month" },
+      {
+        label: "Persona",
+        value: "persona",
+      },
+      {
+        label: "Empresa",
+        value: "empresa",
+      },
+      {
+        label: "Vehículo",
+        value: "vehiculo",
+      },
+    ],
+  },
+  {
+    id: "pdf.available",
+    label: "PDF",
+    options: [
+      {
+        label: "Con PDF",
+        value: "true",
+      },
+      {
+        label: "Sin PDF",
+        value: "false",
+      },
     ],
   },
 ];
