@@ -5,6 +5,7 @@ import {
   FileText,
   MoreVertical,
   UserRound,
+  Printer,
 } from "lucide-react";
 
 import type { DocumentStatus, DocumentTableRow, TableHeader } from "./Table";
@@ -135,12 +136,22 @@ export function PdfCell({
 
 export function ActionsCell({ onClick }: { onClick?: () => void }) {
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="rounded-md p-1 text-slate-700 transition hover:bg-slate-100"
-    >
-      <MoreVertical size={18} />
-    </button>
+    <>
+      <button
+        type="button"
+        onClick={onClick}
+        className="rounded-md p-1 text-slate-700 transition hover:scale-110"
+      >
+        <MoreVertical size={18} />
+      </button>
+
+      <button
+        type="button"
+        onClick={onClick}
+        className="rounded-md p-1 text-slate-700 transition hover:scale-110"
+      >
+        <Printer size={18} />
+      </button>
+    </>
   );
 }
