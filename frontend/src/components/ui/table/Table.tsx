@@ -81,8 +81,8 @@ export default function Table({
     <div
       className={`w-full overflow-hidden rounded-md border border-slate-200 bg-white ${className}`}
     >
-      <div className="w-full overflow-x-auto">
-        <table className="w-full min-w-[760px] border-collapse text-sm">
+      <div className="flex flex-wrap w-full overflow-x-auto">
+        <table className="w-full border-collapse text-sm">
           <thead>
             <tr className="bg-slate-100">
               {headers.map((header, index) => {
