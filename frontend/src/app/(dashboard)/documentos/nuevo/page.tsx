@@ -1,15 +1,11 @@
-"use client";
-
-import { useRouter } from "next/navigation";
-import Button from "@/components/ui/Button";
+import { FileText } from "lucide-react";
+import NuevoDocumentoForm from "@/features/documentos/components/NuevoDocumentoForm";
 
 export default function NuevoDocumento() {
-  const router = useRouter();
   return (
-    <div className="h-screen w-full flex flex-col overflow-hidden p-4 gap-4">
-      <Button variant="primary" onClick={() => router.back()}>
-        VOLVER
-      </Button>
+    <div className="w-full h-screen max-w-[600px] rounded-xl border border-slate-200 bg-white p-5 shadow-sm flex justify-center items-center">
+      MOSTRAR ERROR, YA QUE AL ABRIR DESDE URL, MUESTRA DOCUMENTOS/NUEVO EN
+      CAMBIO AL ABRIR DESDE EL BOTON, ABRE @MODAL/(.)NUEVO MOSTRANDO EL MODAL
     </div>
   );
 }
