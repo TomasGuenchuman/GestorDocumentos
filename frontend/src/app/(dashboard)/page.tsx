@@ -4,6 +4,7 @@ import Button from "@/components/ui/Button";
 import { Plus } from "lucide-react";
 import { Suspense } from "react";
 import DashboardSkeleton from "@/features/dashboard/components/DashboardSkeleton";
+import Link from "next/link";
 
 async function fetchDashboardData() {
   // await prisma.document.findMany(...)
@@ -65,9 +66,11 @@ export default async function Dashboard() {
         <h1 className="text-2xl font-bold text-slate-800">
           Dashboard Vencimientos
         </h1>
-        <Button variant="primary" icon={<Plus size={18} />}>
-          Cargar Nuevo Documento
-        </Button>
+        <Link href="/documentos/nuevo/">
+          <Button variant="primary" icon={<Plus size={18} />}>
+            Cargar Nuevo Documento
+          </Button>
+        </Link>
       </header>
       <Suspense fallback={<DashboardSkeleton />}>
         <DataDashboard />
