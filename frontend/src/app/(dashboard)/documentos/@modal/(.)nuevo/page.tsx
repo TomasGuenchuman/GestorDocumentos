@@ -1,6 +1,29 @@
 import { FileText } from "lucide-react";
 import RouteModal from "@/components/ui/RouteModal";
 import NuevoDocumentoForm from "@/features/documentos/components/NuevoDocumentoForm";
+import { Suspense } from "react";
+import Spinner from "@/components/ui/Spinner";
+
+async function fetchDashboardData() {
+  // await prisma.document.findMany(...)
+  // Simulamos un retraso artificial de 1 segundos para ver el efecto
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+
+  return {
+    vencidos: 12,
+    porVencer: 5,
+    vigentes: 48,
+    events: [
+      { date: "2026-06-17", title: "Seguro vence" },
+      { date: "2026-07-03", title: "Póliza flota principal" },
+    ],
+  };
+}
+
+async function DataTable() {
+  const data = await fetchDashboardData();
+  return <NuevoDocumentoForm />;
+}
 
 export default function NuevoDocumento() {
   return (
@@ -8,7 +31,9 @@ export default function NuevoDocumento() {
       title="Datos del documento"
       icon={<FileText size={22} className="text-slate-700" />}
     >
-      <NuevoDocumentoForm />
+      <Suspense fallback={<Spinner />}>
+        <DataTable />
+      </Suspense>
     </RouteModal>
   );
 }

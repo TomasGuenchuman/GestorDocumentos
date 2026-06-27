@@ -23,7 +23,7 @@ async function fetchDashboardData() {
   };
 }
 
-async function DataTable() {
+async function DocumentData() {
   const data = await fetchDashboardData();
   return <ClientFilterTable />;
 }
@@ -40,7 +40,7 @@ export default async function Documentos() {
         </Link>
       </header>
       <Suspense fallback={<ClientFilterTableSkeleton />}>
-        <DataTable />
+        <DocumentData />
       </Suspense>
     </div>
   );
