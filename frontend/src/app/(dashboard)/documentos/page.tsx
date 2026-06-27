@@ -10,7 +10,7 @@ import NuevoDocumento from "./nuevo/page";
 async function fetchDashboardData() {
   // await prisma.document.findMany(...)
   // Simulamos un retraso artificial de 1 segundos para ver el efecto
-  await new Promise((resolve) => setTimeout(resolve, 1000));
+  await new Promise((resolve) => setTimeout(resolve, 500));
 
   return {
     vencidos: 12,
