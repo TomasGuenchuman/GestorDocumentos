@@ -30,68 +30,47 @@ export class EntidadService {
   ) {}
 
   async getNombreSegunTipo(entidadId: number): Promise<string> {
-    const entidad = await this.entidadRepository.findOne({
-      where: { id: entidadId },
-    });
+    // Hacemos un JOIN manual de todas las posibles tablas "hijas" usando el ID
+    const resultado = await this.entidadRepository
+      .createQueryBuilder('entidad')
+      .leftJoinAndSelect('persona', 'p', 'p.id = entidad.id')
+      .leftJoinAndSelect('vehiculo', 'v', 'v.id = entidad.id')
+      .leftJoinAndSelect('empresa', 'e', 'e.id = entidad.id')
+      .select([
+        'entidad.tipo AS tipo',
+        'p.nombre AS nombre',
+        'p.apellido AS apellido',
+        'v.patente AS patente',
+        'e.razonSocial AS razonSocial',
+      ])
+      .where('entidad.id = :id', { id: entidadId })
+      .getRawOne(); // Usamos getRawOne porque estamos aplanando las tablas hijas en un solo objeto
 
-    if (!entidad) {
+    if (!resultado) {
       throw new NotFoundException(`Entidad con ID ${entidadId} no encontrada`);
     }
 
-    switch (entidad.tipo) {
-      case TipoEntidad.PERSONA: {
-        const persona = await this.personaRepository.findOne({
-          where: {
-            entidad: { id: entidadId },
-          },
-          relations: ['entidad'],
-        });
+    // Ahora evaluamos el resultado plano que devolvió la base de datos
+    switch (resultado.tipo) {
+      case TipoEntidad.PERSONA:
+        if (!resultado.nombre)
+          throw new NotFoundException(`Detalle de Persona no encontrado`);
+        return `${resultado.apellido} ${resultado.nombre}`;
 
-        if (!persona) {
-          throw new NotFoundException(
-            `Persona asociada a la entidad ${entidadId} no encontrada`,
-          );
-        }
+      case TipoEntidad.VEHICULO:
+        if (!resultado.patente)
+          throw new NotFoundException(`Detalle de Vehículo no encontrado`);
+        return resultado.patente;
 
-        return persona.apellido + '' + persona.nombre;
-      }
-
-      case TipoEntidad.VEHICULO: {
-        const vehiculo = await this.vehiculoRepository.findOne({
-          where: {
-            entidad: { id: entidadId },
-          },
-          relations: ['entidad'],
-        });
-
-        if (!vehiculo) {
-          throw new NotFoundException(
-            `Vehículo asociado a la entidad ${entidadId} no encontrado`,
-          );
-        }
-
-        return vehiculo.patente;
-      }
-
-      case TipoEntidad.EMPRESA: {
-        const empresa = await this.empresaRepository.findOne({
-          where: {
-            entidad: { id: entidadId },
-          },
-          relations: ['entidad'],
-        });
-
-        if (!empresa) {
-          throw new NotFoundException(
-            `Empresa asociada a la entidad ${entidadId} no encontrada`,
-          );
-        }
-
-        return empresa.razonSocial;
-      }
+      case TipoEntidad.EMPRESA:
+        if (!resultado.razonSocial)
+          throw new NotFoundException(`Detalle de Empresa no encontrado`);
+        return resultado.razonSocial;
 
       default:
-        throw new BadRequestException('Tipo de entidad no soportado:');
+        throw new BadRequestException(
+          `Tipo de entidad no soportado: ${resultado.tipo}`,
+        );
     }
   }
 
