@@ -13,6 +13,14 @@ import { Persona } from '../entities/persona.entity';
 import { Vehiculo } from '../entities/vehiculo.entity';
 import { Empresa } from '../entities/empresa.entity';
 
+type NombreSegunTipoRaw = {
+  tipo: TipoEntidad;
+  nombre: string | null;
+  apellido: string | null;
+  patente: string | null;
+  razonSocial: string | null;
+};
+
 @Injectable()
 export class EntidadService {
   constructor(
@@ -29,6 +37,7 @@ export class EntidadService {
     private readonly empresaRepository: Repository<Empresa>,
   ) {}
 
+  
   async getNombreSegunTipo(entidadId: number): Promise<string> {
     // Hacemos un JOIN manual de todas las posibles tablas "hijas" usando el ID
     const resultado = await this.entidadRepository
@@ -44,7 +53,7 @@ export class EntidadService {
         'e.razonSocial AS razonSocial',
       ])
       .where('entidad.id = :id', { id: entidadId })
-      .getRawOne(); // Usamos getRawOne porque estamos aplanando las tablas hijas en un solo objeto
+      .getRawOne<NombreSegunTipoRaw>(); // Usamos getRawOne porque estamos aplanando las tablas hijas en un solo objeto
 
     if (!resultado) {
       throw new NotFoundException(`Entidad con ID ${entidadId} no encontrada`);
