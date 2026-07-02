@@ -9,6 +9,8 @@ import {
   DateCell,
 } from "./table.components";
 import { PdfClientCell, ActionsClientCell } from "./ClientCells";
+import { EntityTableRow } from "@/features/entidades/types/types";
+import { Building2, Truck, User, FolderOpen, Pencil, Eye } from "lucide-react";
 
 type EntityType = "persona" | "empresa" | "vehiculo";
 export type DocumentStatus = "vigente" | "vencido" | "por vencer";
@@ -48,7 +50,7 @@ export type DocumentTableRow = {
 
 type TableProps = {
   headers?: TableHeader[];
-  rows: DocumentTableRow[];
+  rows: DocumentTableRow[] | EntityTableRow[];
   emptyMessage?: string;
   className?: string;
 };
@@ -70,6 +72,18 @@ const DEFAULT_HEADERS: TableHeader[] = [
     align: "center",
   },
 ];
+
+function isDocumentRow(
+  row: DocumentTableRow | EntityTableRow,
+): row is DocumentTableRow {
+  return "document" in row;
+}
+
+function isEntityRow(
+  row: DocumentTableRow | EntityTableRow,
+): row is EntityTableRow {
+  return "documentation" in row;
+}
 
 export default function Table({
   headers = DEFAULT_HEADERS,
@@ -120,38 +134,178 @@ export default function Table({
                   key={row.id}
                   className="border-t border-slate-200 transition-colors hover:bg-slate-50"
                 >
-                  <td className="px-5 py-4 align-middle">
-                    <DocumentCell
-                      title={row.document.title}
-                      version={row.document.version}
-                    />
-                  </td>
+                  {isDocumentRow(row) ? (
+                    <>
+                      <td className="px-5 py-4 align-middle">
+                        <DocumentCell
+                          title={row.document.title}
+                          version={row.document.version}
+                        />
+                      </td>
 
-                  <td className="px-5 py-4 align-middle">
-                    <EntityCell
-                      title={row.entity.title}
-                      type={row.entity.type}
-                    />
-                  </td>
+                      <td className="px-5 py-4 align-middle">
+                        <EntityCell
+                          title={row.entity.title}
+                          type={row.entity.type}
+                        />
+                      </td>
 
-                  <td className="px-5 py-4 text-center align-middle">
-                    <StatusBadge status={row.status} />
-                  </td>
+                      <td className="px-5 py-4 text-center align-middle">
+                        <StatusBadge status={row.status} />
+                      </td>
 
-                  <td className="px-5 py-4 align-middle">
-                    <DateCell
-                      expiration={row.dates.expiration}
-                      expired={row.dates.expired}
-                    />
-                  </td>
+                      <td className="px-5 py-4 align-middle">
+                        <DateCell
+                          expiration={row.dates.expiration}
+                          expired={row.dates.expired}
+                        />
+                      </td>
 
-                  <td className="px-5 py-4 text-center align-middle">
-                    <PdfClientCell row={row} />
-                  </td>
+                      <td className="px-5 py-4 text-center align-middle">
+                        <PdfClientCell row={row} />
+                      </td>
 
-                  <td className="px-5 py-4 text-center align-middle">
-                    <ActionsClientCell row={row} />
-                  </td>
+                      <td className="px-5 py-4 text-center align-middle">
+                        <ActionsClientCell row={row} />
+                      </td>
+                    </>
+                  ) : isEntityRow(row) ? (
+                    <>
+                      {/* Entidad */}
+                      <td className="px-5 py-4 align-middle">
+                        <div className="flex items-center gap-3">
+                          <div className="flex h-10 w-10 items-center justify-center rounded-md bg-slate-100 text-slate-500">
+                            {row.entity.type === "persona" && (
+                              <User size={20} />
+                            )}
+                            {row.entity.type === "empresa" && (
+                              <Building2 size={20} />
+                            )}
+                            {row.entity.type === "vehiculo" && (
+                              <Truck size={20} />
+                            )}
+                          </div>
+
+                          <div className="min-w-0">
+                            <p className="font-medium text-slate-900 truncate">
+                              {row.entity.title}
+                            </p>
+
+                            <p className="text-sm text-slate-500 truncate">
+                              {row.entity.subtitle}
+                            </p>
+                          </div>
+                        </div>
+                      </td>
+
+                      {/* Tipo documentación */}
+                      <td className="px-5 py-4 align-middle">
+                        <div className="flex flex-col gap-1">
+                          <div className="flex items-center gap-3">
+                            <span className="whitespace-nowrap text-sm text-slate-600">
+                              {row.documentation.current}/
+                              {row.documentation.total} Vigentes
+                            </span>
+
+                            <div className="h-2 w-24 overflow-hidden rounded-full bg-slate-200">
+                              <div
+                                className={`h-full transition-all ${
+                                  row.documentation.expired > 0
+                                    ? "bg-red-500"
+                                    : row.documentation.warning > 0
+                                      ? "bg-amber-500"
+                                      : "bg-emerald-500"
+                                }`}
+                                style={{
+                                  width: `${
+                                    (row.documentation.current /
+                                      row.documentation.total) *
+                                    100
+                                  }%`,
+                                }}
+                              />
+                            </div>
+                          </div>
+
+                          {row.documentation.expired > 0 && (
+                            <span className="text-xs text-red-500">
+                              ({row.documentation.expired} vencidos)
+                            </span>
+                          )}
+
+                          {row.documentation.warning > 0 && (
+                            <span className="text-xs text-amber-500">
+                              ({row.documentation.warning} próximos a vencer)
+                            </span>
+                          )}
+
+                          {row.documentation.expired === 0 &&
+                            row.documentation.warning === 0 && (
+                              <span className="text-xs text-emerald-600">
+                                Documentación completa
+                              </span>
+                            )}
+                        </div>
+                      </td>
+
+                      {/* Estado */}
+                      <td className="px-5 py-4 text-center align-middle">
+                        {row.status === "al-dia" && (
+                          <span className="inline-flex items-center gap-2 rounded-md bg-emerald-100 px-3 py-1 text-xs font-medium text-emerald-700">
+                            <span className="h-2 w-2 rounded-full bg-emerald-500" />
+                            Al día
+                          </span>
+                        )}
+
+                        {row.status === "atencion" && (
+                          <span className="inline-flex items-center gap-2 rounded-md bg-amber-100 px-3 py-1 text-xs font-medium text-amber-700">
+                            <span className="h-2 w-2 rounded-full bg-amber-500" />
+                            Atención
+                          </span>
+                        )}
+
+                        {row.status === "vencimientos" && (
+                          <span className="inline-flex items-center gap-2 rounded-md bg-red-100 px-3 py-1 text-xs font-medium text-red-700">
+                            <span className="h-2 w-2 rounded-full bg-red-500" />
+                            Con vencimientos
+                          </span>
+                        )}
+
+                        {row.status === "sin-cargar" && (
+                          <span className="inline-flex items-center gap-2 rounded-md bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
+                            <span className="h-2 w-2 rounded-full bg-slate-400" />
+                            Sin cargar
+                          </span>
+                        )}
+                      </td>
+
+                      {/* Acciones */}
+                      <td className="px-5 py-4 align-middle">
+                        <div className="flex items-center justify-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+                          <button
+                            className="rounded-md p-2 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900"
+                            title="Documentación"
+                          >
+                            <FolderOpen size={18} />
+                          </button>
+
+                          <button
+                            className="rounded-md p-2 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900"
+                            title="Editar"
+                          >
+                            <Pencil size={18} />
+                          </button>
+
+                          <button
+                            className="rounded-md p-2 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900"
+                            title="Ver detalle"
+                          >
+                            <Eye size={18} />
+                          </button>
+                        </div>
+                      </td>
+                    </>
+                  ) : null}
                 </tr>
               ))
             )}

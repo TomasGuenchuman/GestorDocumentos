@@ -2,7 +2,8 @@ import { Suspense } from "react";
 
 import Button from "@/components/ui/Button";
 import { Plus } from "lucide-react";
-import ClientFilterTable from "@/features/documentos/components/ClientFilterTable";
+import ClientFilterTable from "@/features/entidades/components/ClientFilterTable";
+import ClientFilterTableSkeleton from "@/features/entidades/components/ClientFilterTableSkeleton";
 import Link from "next/link";
 
 async function fetchDashboardData() {
@@ -37,11 +38,9 @@ export default async function Entidades() {
           </Button>
         </Link>
       </header>
-      {/*
       <Suspense fallback={<ClientFilterTableSkeleton />}>
         <DocumentData />
       </Suspense>
-      */}
     </div>
   );
 }
