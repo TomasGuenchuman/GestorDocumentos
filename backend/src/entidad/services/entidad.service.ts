@@ -37,7 +37,6 @@ export class EntidadService {
     private readonly empresaRepository: Repository<Empresa>,
   ) {}
 
-  
   async getNombreSegunTipo(entidadId: number): Promise<string> {
     // Hacemos un JOIN manual de todas las posibles tablas "hijas" usando el ID
     const resultado = await this.entidadRepository
@@ -84,89 +83,50 @@ export class EntidadService {
   }
 
   async findAll() {
-    const entidades = await this.entidadRepository.find();
-
-    const personaIds = entidades
-      .filter((entidad) => entidad.tipo === TipoEntidad.PERSONA)
-      .map((entidad) => entidad.id);
-
-    const vehiculoIds = entidades
-      .filter((entidad) => entidad.tipo === TipoEntidad.VEHICULO)
-      .map((entidad) => entidad.id);
-
-    const empresaIds = entidades
-      .filter((entidad) => entidad.tipo === TipoEntidad.EMPRESA)
-      .map((entidad) => entidad.id);
-
-    const [personas, vehiculos, empresas] = await Promise.all([
-      personaIds.length > 0
-        ? this.personaRepository.find({
-            where: {
-              id: In(personaIds),
-            },
-          })
-        : Promise.resolve([] as Persona[]),
-
-      vehiculoIds.length > 0
-        ? this.vehiculoRepository.find({
-            where: {
-              id: In(vehiculoIds),
-            },
-          })
-        : Promise.resolve([] as Vehiculo[]),
-
-      empresaIds.length > 0
-        ? this.empresaRepository.find({
-            where: {
-              id: In(empresaIds),
-            },
-          })
-        : Promise.resolve([] as Empresa[]),
-    ]);
-
-    const personasMap = new Map<number, Persona>(
-      personas.map((persona): [number, Persona] => [persona.id, persona]),
-    );
-
-    const vehiculosMap = new Map<number, Vehiculo>(
-      vehiculos.map((vehiculo): [number, Vehiculo] => [vehiculo.id, vehiculo]),
-    );
-
-    const empresasMap = new Map<number, Empresa>(
-      empresas.map((empresa): [number, Empresa] => [empresa.id, empresa]),
-    );
+    const entidades = await this.entidadRepository
+      .createQueryBuilder('entidad')
+      .leftJoinAndMapOne(
+        'entidad.persona',
+        Persona,
+        'persona',
+        'persona.id = entidad.id',
+      )
+      .leftJoinAndMapOne(
+        'entidad.vehiculo',
+        Vehiculo,
+        'vehiculo',
+        'vehiculo.id = entidad.id',
+      )
+      .leftJoinAndMapOne(
+        'entidad.empresa',
+        Empresa,
+        'empresa',
+        'empresa.id = entidad.id',
+      )
+      .getMany();
 
     return entidades.map((entidad) => {
       switch (entidad.tipo) {
-        case TipoEntidad.PERSONA: {
-          const persona = personasMap.get(entidad.id);
-
+        case TipoEntidad.PERSONA:
           return {
             id: entidad.id,
             tipo: entidad.tipo,
-            detalle: persona ?? null,
+            detalle: entidad.persona ?? null,
           };
-        }
 
-        case TipoEntidad.VEHICULO: {
-          const vehiculo = vehiculosMap.get(entidad.id);
-
+        case TipoEntidad.VEHICULO:
           return {
             id: entidad.id,
             tipo: entidad.tipo,
-            detalle: vehiculo ?? null,
+            detalle: entidad.vehiculo ?? null,
           };
-        }
 
-        case TipoEntidad.EMPRESA: {
-          const empresa = empresasMap.get(entidad.id);
-
+        case TipoEntidad.EMPRESA:
           return {
             id: entidad.id,
             tipo: entidad.tipo,
-            detalle: empresa ?? null,
+            detalle: entidad.empresa ?? null,
           };
-        }
 
         default:
           throw new BadRequestException(
@@ -177,54 +137,58 @@ export class EntidadService {
   }
 
   async findOne(id: number) {
-    const entidad = await this.entidadRepository.findOne({
-      where: { id },
-    });
+    const resultado = await this.entidadRepository
+      .createQueryBuilder('entidad')
+      .leftJoinAndMapOne(
+        'entidad.persona',
+        Persona,
+        'persona',
+        'persona.id = entidad.id',
+      )
+      .leftJoinAndMapOne(
+        'entidad.vehiculo',
+        Vehiculo,
+        'vehiculo',
+        'vehiculo.id = entidad.id',
+      )
+      .leftJoinAndMapOne(
+        'entidad.empresa',
+        Empresa,
+        'empresa',
+        'empresa.id = entidad.id',
+      )
+      .where('entidad.id = :id', { id })
+      .getOne();
 
-    if (!entidad) {
+    if (!resultado) {
       throw new NotFoundException(`Entidad con ID ${id} no encontrada`);
     }
 
-    switch (entidad.tipo) {
-      case TipoEntidad.PERSONA: {
-        const persona = await this.personaRepository.findOne({
-          where: { id: entidad.id },
-        });
-
+    switch (resultado.tipo) {
+      case TipoEntidad.PERSONA:
         return {
-          id: entidad.id,
-          tipo: entidad.tipo,
-          detalle: persona ?? null,
+          id: resultado.id,
+          tipo: resultado.tipo,
+          detalle: resultado.persona ?? null,
         };
-      }
 
-      case TipoEntidad.VEHICULO: {
-        const vehiculo = await this.vehiculoRepository.findOne({
-          where: { id: entidad.id },
-        });
-
+      case TipoEntidad.VEHICULO:
         return {
-          id: entidad.id,
-          tipo: entidad.tipo,
-          detalle: vehiculo ?? null,
+          id: resultado.id,
+          tipo: resultado.tipo,
+          detalle: resultado.vehiculo ?? null,
         };
-      }
 
-      case TipoEntidad.EMPRESA: {
-        const empresa = await this.empresaRepository.findOne({
-          where: { id: entidad.id },
-        });
-
+      case TipoEntidad.EMPRESA:
         return {
-          id: entidad.id,
-          tipo: entidad.tipo,
-          detalle: empresa ?? null,
+          id: resultado.id,
+          tipo: resultado.tipo,
+          detalle: resultado.empresa ?? null,
         };
-      }
 
       default:
         throw new BadRequestException(
-          `Tipo de entidad no soportado: ${entidad.tipo}`,
+          `Tipo de entidad no soportado: ${resultado.tipo}`,
         );
     }
   }
