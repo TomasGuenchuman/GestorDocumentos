@@ -6,6 +6,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { EntidadModule } from './entidad/entidad.module';
 import { DocumentoModule } from './documento/documento.module';
+import { SeedModule } from './seed/seed.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { DocumentoModule } from './documento/documento.module';
     }),
     EntidadModule,
     DocumentoModule,
+    SeedModule,
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'uploads'),
       serveRoot: '/uploads', // La URL base para acceder a los archivos
