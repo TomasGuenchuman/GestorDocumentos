@@ -18,6 +18,7 @@ import { EmpresaController } from './controllers/empresa.controller';
 import { VehiculoController } from './controllers/vehiculo.controller';
 import { EntidadController } from './controllers/entidad.controller';
 
+import { DocumentStatusRule } from './rules/document-status.rule';
 @Module({
   imports: [
     // Importante: Registrar todas las tablas aquí
@@ -29,7 +30,13 @@ import { EntidadController } from './controllers/entidad.controller';
     VehiculoController,
     EntidadController,
   ],
-  providers: [PersonaService, EmpresaService, VehiculoService, EntidadService],
+  providers: [
+    PersonaService,
+    EmpresaService,
+    VehiculoService,
+    EntidadService,
+    DocumentStatusRule,
+  ],
   exports: [PersonaService, EmpresaService, VehiculoService, EntidadService],
 })
 export class EntidadModule {}

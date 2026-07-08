@@ -14,6 +14,7 @@ import { Vehiculo } from '../entities/vehiculo.entity';
 import { Empresa } from '../entities/empresa.entity';
 import { Documento } from 'src/documento/entities/documento.entity';
 import { DocumentoVersion } from 'src/documento/entities/documentoVersion.entity';
+import { DocumentStatusRule } from '../rules/document-status.rule';
 
 type NombreSegunTipoRaw = {
   tipo: TipoEntidad;
@@ -37,6 +38,8 @@ export class EntidadService {
 
     @InjectRepository(Empresa)
     private readonly empresaRepository: Repository<Empresa>,
+
+    private readonly documentStatusRule: DocumentStatusRule,
   ) {}
 
   async getNombreSegunTipo(entidadId: number): Promise<string> {
@@ -293,6 +296,9 @@ export class EntidadService {
     const entidades = await query.getMany();
 
     return entidades.map((entidad) => {
+      const documentation = this.documentStatusRule.buildDocumentation(
+        entidad.documentos ?? [],
+      );
       switch (entidad.tipo) {
         case TipoEntidad.PERSONA:
           return {
@@ -300,6 +306,8 @@ export class EntidadService {
             tipo: entidad.tipo,
             detalle: entidad.persona,
             documentos: entidad.documentos,
+            documentation,
+            status: this.documentStatusRule.getEntityStatus(documentation),
           };
 
         case TipoEntidad.VEHICULO:
@@ -308,6 +316,8 @@ export class EntidadService {
             tipo: entidad.tipo,
             detalle: entidad.vehiculo,
             documentos: entidad.documentos,
+            documentation,
+            status: this.documentStatusRule.getEntityStatus(documentation),
           };
 
         case TipoEntidad.EMPRESA:
@@ -316,6 +326,8 @@ export class EntidadService {
             tipo: entidad.tipo,
             detalle: entidad.empresa,
             documentos: entidad.documentos,
+            documentation,
+            status: this.documentStatusRule.getEntityStatus(documentation),
           };
 
         default:
