@@ -1,0 +1,46 @@
+[
+  {
+    "nombre": "DNI",
+    "tipo": "persona"
+  },
+  {
+    "nombre": "Tarjeta PNA",
+    "tipo": "persona"
+  },
+  {
+    "nombre": "Licencia de conducir",
+    "tipo": "persona"
+  },
+  {
+    "nombre": "Certificado PBIP",
+    "tipo": "persona"
+  },
+  {
+    "nombre": "RTO",
+    "tipo": "vehiculo"
+  },
+  {
+    "nombre": "Habilitacion municipal",
+    "tipo": "vehiculo"
+  },
+  {
+    "nombre": "Cedula Verde",
+    "tipo": "vehiculo"
+  },
+  {
+    "nombre": "Habilitacion oficina",
+    "tipo": "empresa"
+  },
+  {
+    "nombre": "Habilitacion SENASA",
+    "tipo": "empresa"
+  },
+  {
+    "nombre": "Habilitacion puerto",
+    "tipo": "empresa"
+  },
+  {
+    "nombre": "Habilitacion bomberos",
+    "tipo": "empresa"
+  }
+]

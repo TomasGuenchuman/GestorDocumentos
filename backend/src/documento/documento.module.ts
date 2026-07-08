@@ -23,5 +23,6 @@ import { DocumentoVersionController } from './controllers/documentoVersion.contr
     DocumentoVersionController,
   ],
   providers: [DocumentoService, CategoriaService, DocumentoVersionService],
+  exports: [DocumentoService, CategoriaService, DocumentoVersionService],
 })
 export class DocumentoModule {}

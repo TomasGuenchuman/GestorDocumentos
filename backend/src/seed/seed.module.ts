@@ -4,11 +4,22 @@ import { SeedService } from './seed.service';
 import { VehiculoSeeder } from './seeders/vehiculo.seeder';
 
 import { EntidadModule } from 'src/entidad/entidad.module';
+import { DocumentoModule } from 'src/documento/documento.module';
 import { PersonaSeeder } from './seeders/persona.seeder';
+import { EmpresaSeeder } from './seeders/empresa.seeder';
+import { CategoriaSeeder } from './seeders/categoria.seeder';
+import { DocumentoSeeder } from './seeders/documentos.seeder';
 
 @Module({
-  imports: [EntidadModule],
-  providers: [SeedService, VehiculoSeeder, PersonaSeeder],
+  imports: [EntidadModule, DocumentoModule],
+  providers: [
+    SeedService,
+    VehiculoSeeder,
+    PersonaSeeder,
+    EmpresaSeeder,
+    CategoriaSeeder,
+    DocumentoSeeder,
+  ],
   exports: [SeedService],
 })
 export class SeedModule {}

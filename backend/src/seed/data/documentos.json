@@ -1,0 +1,92 @@
+[
+  {
+    "requiere_vencimiento": true,
+    "categoriaId": 1,
+    "entidadId": 4
+  },
+  {
+    "requiere_vencimiento": true,
+    "categoriaId": 2,
+    "entidadId": 4
+  },
+  {
+    "requiere_vencimiento": true,
+    "categoriaId": 3,
+    "entidadId": 4
+  },
+  {
+    "requiere_vencimiento": false,
+    "categoriaId": 4,
+    "entidadId": 4
+  },
+  {
+    "requiere_vencimiento": true,
+    "categoriaId": 1,
+    "entidadId": 5
+  },
+  {
+    "requiere_vencimiento": true,
+    "categoriaId": 3,
+    "entidadId": 5
+  },
+  {
+    "requiere_vencimiento": true,
+    "categoriaId": 5,
+    "entidadId": 1
+  },
+  {
+    "requiere_vencimiento": true,
+    "categoriaId": 6,
+    "entidadId": 1
+  },
+  {
+    "requiere_vencimiento": false,
+    "categoriaId": 7,
+    "entidadId": 1
+  },
+  {
+    "requiere_vencimiento": true,
+    "categoriaId": 5,
+    "entidadId": 2
+  },
+  {
+    "requiere_vencimiento": false,
+    "categoriaId": 7,
+    "entidadId": 2
+  },
+  {
+    "requiere_vencimiento": true,
+    "categoriaId": 5,
+    "entidadId": 3
+  },
+  {
+    "requiere_vencimiento": true,
+    "categoriaId": 6,
+    "entidadId": 3
+  },
+  {
+    "requiere_vencimiento": false,
+    "categoriaId": 7,
+    "entidadId": 3
+  },
+  {
+    "requiere_vencimiento": true,
+    "categoriaId": 8,
+    "entidadId": 6
+  },
+  {
+    "requiere_vencimiento": true,
+    "categoriaId": 9,
+    "entidadId": 6
+  },
+  {
+    "requiere_vencimiento": true,
+    "categoriaId": 10,
+    "entidadId": 6
+  },
+  {
+    "requiere_vencimiento": false,
+    "categoriaId": 11,
+    "entidadId": 6
+  }
+]

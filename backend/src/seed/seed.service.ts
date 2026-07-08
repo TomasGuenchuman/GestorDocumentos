@@ -1,6 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { VehiculoSeeder } from './seeders/vehiculo.seeder';
 import { PersonaSeeder } from './seeders/persona.seeder';
+import { EmpresaSeeder } from './seeders/empresa.seeder';
+import { CategoriaSeeder } from './seeders/categoria.seeder';
+import { DocumentoSeeder } from './seeders/documentos.seeder';
 
 @Injectable()
 export class SeedService {
@@ -9,6 +12,9 @@ export class SeedService {
   constructor(
     private readonly vehiculoSeeder: VehiculoSeeder,
     private readonly personaSeeder: PersonaSeeder,
+    private readonly empresaSeeder: EmpresaSeeder,
+    private readonly categoriaSeeder: CategoriaSeeder,
+    private readonly documentoSeeder: DocumentoSeeder,
   ) {}
 
   async run(): Promise<void> {
@@ -16,7 +22,9 @@ export class SeedService {
 
     await this.vehiculoSeeder.run();
     await this.personaSeeder.run();
-
+    await this.empresaSeeder.run();
+    await this.categoriaSeeder.run();
+    await this.documentoSeeder.run();
     this.logger.log('Seed finalizado correctamente.');
   }
 }

@@ -4,7 +4,6 @@ import personas from '../data/personas.json';
 
 @Injectable()
 export class PersonaSeeder {
-
   constructor(private readonly personaService: PersonaService) {}
   private readonly logger = new Logger(PersonaSeeder.name);
 
