@@ -65,9 +65,13 @@ export class Documento {
   @JoinColumn({ name: 'entidad_id' })
   entidad!: Entidad;
 
+  // Solo para leftJoinAndMapOne
+
   @OneToMany(
     () => DocumentoVersion,
     (documentoVersion) => documentoVersion.documento,
   )
   versiones!: DocumentoVersion[];
+
+  ultimaVersion?: DocumentoVersion | null;
 }

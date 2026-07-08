@@ -12,6 +12,8 @@ import { TipoEntidad } from 'src/common/tipoEntidad.enum';
 import { Persona } from '../entities/persona.entity';
 import { Vehiculo } from '../entities/vehiculo.entity';
 import { Empresa } from '../entities/empresa.entity';
+import { Documento } from 'src/documento/entities/documento.entity';
+import { DocumentoVersion } from 'src/documento/entities/documentoVersion.entity';
 
 type NombreSegunTipoRaw = {
   tipo: TipoEntidad;
@@ -191,5 +193,136 @@ export class EntidadService {
           `Tipo de entidad no soportado: ${resultado.tipo}`,
         );
     }
+  }
+
+  async inicialData() {
+    /*const entidades = await this.entidadRepository
+      .createQueryBuilder('entidad')
+
+      // ===== Detalle de la entidad =====
+      .leftJoinAndMapOne(
+        'entidad.persona',
+        Persona,
+        'persona',
+        'persona.id = entidad.id',
+      )
+      .leftJoinAndMapOne(
+        'entidad.vehiculo',
+        Vehiculo,
+        'vehiculo',
+        'vehiculo.id = entidad.id',
+      )
+      .leftJoinAndMapOne(
+        'entidad.empresa',
+        Empresa,
+        'empresa',
+        'empresa.id = entidad.id',
+      )
+
+      // ===== Todos los documentos =====
+      .leftJoinAndMapMany(
+        'entidad.documentos',
+        Documento,
+        'documento',
+        'documento.entidad_id = entidad.id',
+      )
+
+      // ===== Última versión de cada documento =====
+      .leftJoinAndMapOne(
+        'documento.ultimaVersion',
+        DocumentoVersion,
+        'ultimaVersion',
+        `
+          ultimaVersion.documento_id = documento.id
+          AND ultimaVersion.version = (
+            SELECT MAX(dv.version)
+            FROM documentoVersion dv
+            WHERE dv.documento_id = documento.id
+          )
+        `,
+      )
+      .getMany();*/
+
+    const query = await this.entidadRepository
+      .createQueryBuilder('entidad')
+      // ===== Detalle de la entidad =====
+      .leftJoinAndMapOne(
+        'entidad.persona',
+        Persona,
+        'persona',
+        'persona.id = entidad.id',
+      )
+      .leftJoinAndMapOne(
+        'entidad.vehiculo',
+        Vehiculo,
+        'vehiculo',
+        'vehiculo.id = entidad.id',
+      )
+      .leftJoinAndMapOne(
+        'entidad.empresa',
+        Empresa,
+        'empresa',
+        'empresa.id = entidad.id',
+      )
+
+      // ===== Todos los documentos =====
+      .leftJoinAndMapMany(
+        'entidad.documentos',
+        Documento,
+        'documento',
+        'documento.entidad_id = entidad.id',
+      )
+
+      // ===== Última versión de cada documento =====
+      .leftJoinAndMapOne(
+        'documento.ultimaVersion',
+        DocumentoVersion,
+        'ultimaVersion',
+        `
+          ultimaVersion.documento_id = documento.id
+          AND ultimaVersion.version = (
+            SELECT MAX(dv.version)
+            FROM documento_version dv
+            WHERE dv.documento_id = documento.id
+          )
+        `,
+      );
+
+    console.log(query.getSql());
+
+    const entidades = await query.getMany();
+
+    return entidades.map((entidad) => {
+      switch (entidad.tipo) {
+        case TipoEntidad.PERSONA:
+          return {
+            id: entidad.id,
+            tipo: entidad.tipo,
+            detalle: entidad.persona,
+            documentos: entidad.documentos,
+          };
+
+        case TipoEntidad.VEHICULO:
+          return {
+            id: entidad.id,
+            tipo: entidad.tipo,
+            detalle: entidad.vehiculo,
+            documentos: entidad.documentos,
+          };
+
+        case TipoEntidad.EMPRESA:
+          return {
+            id: entidad.id,
+            tipo: entidad.tipo,
+            detalle: entidad.empresa,
+            documentos: entidad.documentos,
+          };
+
+        default:
+          throw new BadRequestException(
+            `Tipo de entidad no soportado: ${entidad.tipo}`,
+          );
+      }
+    });
   }
 }

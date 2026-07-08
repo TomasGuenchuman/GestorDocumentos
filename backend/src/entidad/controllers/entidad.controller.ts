@@ -10,6 +10,11 @@ export class EntidadController {
     return this.entidadService.findAll();
   }
 
+  @Get('data')
+  findData() {
+    return this.entidadService.inicialData();
+  }
+
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.entidadService.findOne(id);
