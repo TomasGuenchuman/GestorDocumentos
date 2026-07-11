@@ -4,6 +4,7 @@ import { PersonaSeeder } from './seeders/persona.seeder';
 import { EmpresaSeeder } from './seeders/empresa.seeder';
 import { CategoriaSeeder } from './seeders/categoria.seeder';
 import { DocumentoSeeder } from './seeders/documentos.seeder';
+import { DocumentoVersionSeeder } from './seeders/documentosVersion.seeder';
 
 @Injectable()
 export class SeedService {
@@ -15,6 +16,7 @@ export class SeedService {
     private readonly empresaSeeder: EmpresaSeeder,
     private readonly categoriaSeeder: CategoriaSeeder,
     private readonly documentoSeeder: DocumentoSeeder,
+    private readonly documentoVersionSeeder: DocumentoVersionSeeder,
   ) {}
 
   async run(): Promise<void> {
@@ -25,6 +27,7 @@ export class SeedService {
     await this.empresaSeeder.run();
     await this.categoriaSeeder.run();
     await this.documentoSeeder.run();
+    await this.documentoVersionSeeder.run();
     this.logger.log('Seed finalizado correctamente.');
   }
 }

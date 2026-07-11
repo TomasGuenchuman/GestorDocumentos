@@ -9,6 +9,7 @@ import { PersonaSeeder } from './seeders/persona.seeder';
 import { EmpresaSeeder } from './seeders/empresa.seeder';
 import { CategoriaSeeder } from './seeders/categoria.seeder';
 import { DocumentoSeeder } from './seeders/documentos.seeder';
+import { DocumentoVersionSeeder } from './seeders/documentosVersion.seeder';
 
 @Module({
   imports: [EntidadModule, DocumentoModule],
@@ -19,6 +20,7 @@ import { DocumentoSeeder } from './seeders/documentos.seeder';
     EmpresaSeeder,
     CategoriaSeeder,
     DocumentoSeeder,
+    DocumentoVersionSeeder,
   ],
   exports: [SeedService],
 })
