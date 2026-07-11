@@ -12,12 +12,12 @@
   {
     "documentoId": 2,
     "requiereVencimiento": true,
-    "fecha_vencimiento": "2027-12-20T18:00:00Z"
+    "fecha_vencimiento": "2026-07-10T18:00:00Z"
   },
   {
     "documentoId": 3,
     "requiereVencimiento": true,
-    "fecha_vencimiento": "2026-05-20T18:00:00Z"
+    "fecha_vencimiento": "2026-07-20T18:00:00Z"
   },
   {
     "documentoId": 4,
