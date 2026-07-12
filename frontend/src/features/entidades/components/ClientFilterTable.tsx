@@ -1,102 +1,10 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import Table from "@/components/ui/table/Table";
 import FiltersBar from "@/features/documentos/components/FiltersBar";
 import { EntityTableRow } from "@/features/entidades/types/types";
-
-const rows: EntityTableRow[] = [
-  {
-    id: 1,
-    entity: {
-      title: "Juan Carlos Pérez",
-      subtitle: "DNI: 20-3549281-9",
-      type: "persona",
-    },
-    documentation: {
-      current: 5,
-      total: 5,
-      warning: 0,
-      expired: 0,
-    },
-    status: "al-dia",
-  },
-  {
-    id: 2,
-    entity: {
-      title: "Logistics North S.A.",
-      subtitle: "CUIT: 30-71238456-0",
-      type: "empresa",
-    },
-    documentation: {
-      current: 12,
-      total: 15,
-      warning: 0,
-      expired: 3,
-    },
-    status: "vencimientos",
-  },
-  {
-    id: 3,
-    entity: {
-      title: "Scania R450",
-      subtitle: "Patente AB-123-CD",
-      type: "vehiculo",
-    },
-    documentation: {
-      current: 3,
-      total: 4,
-      warning: 1,
-      expired: 0,
-    },
-    status: "atencion",
-  },
-  {
-    id: 4,
-    entity: {
-      title: "Trailer T-0092",
-      subtitle: "Sider Fleet 02",
-      type: "vehiculo",
-    },
-    documentation: {
-      current: 0,
-      total: 2,
-      warning: 0,
-      expired: 0,
-    },
-    status: "sin-cargar",
-  },
-  {
-    id: 5,
-    entity: {
-      title: "María Fernández",
-      subtitle: "DNI: 27-33445566-8",
-      type: "persona",
-    },
-    documentation: {
-      current: 4,
-      total: 5,
-      warning: 1,
-      expired: 0,
-    },
-    status: "atencion",
-  },
-  {
-    id: 6,
-    entity: {
-      title: "Constructora del Sur S.R.L.",
-      subtitle: "CUIT: 30-70123456-9",
-      type: "empresa",
-    },
-    documentation: {
-      current: 8,
-      total: 10,
-      warning: 0,
-      expired: 2,
-    },
-    status: "vencimientos",
-  },
-];
+import { Entidad } from "@/features/entidades/api/entidad.service";
 
 /* FILTTROS */
 const filters = [
@@ -114,18 +22,26 @@ const filters = [
     label: "Estado",
     options: [
       { label: "Al día", value: "al-dia" },
-      { label: "Atención", value: "atencion" },
-      { label: "Con vencimientos", value: "vencimientos" },
+      { label: "Proximo a vencer", value: "warning" },
+      { label: "vencidos", value: "expired" },
       { label: "Sin cargar", value: "sin-cargar" },
     ],
   },
 ];
-export default function ClientFilterTable() {
+
+type ClientFilterTableProps = {
+  data: Entidad[];
+};
+
+export default function ClientFilterTable({ data }: ClientFilterTableProps) {
   const [filterValues, setFilterValues] = useState({
     type: "",
     status: "",
   });
 
+  useEffect(() => {
+    console.log(data);
+  }, [data]);
   const handleFilterChange = (filterId: string, value: string) => {
     setFilterValues((prev) => ({
       ...prev,
@@ -141,9 +57,8 @@ export default function ClientFilterTable() {
   };
 
   const filteredRows = useMemo(() => {
-    return rows.filter((row) => {
-      const matchesType =
-        !filterValues.type || row.entity.type === filterValues.type;
+    return data.filter((row) => {
+      const matchesType = !filterValues.type || row.tipo === filterValues.type;
 
       const matchesStatus =
         !filterValues.status || row.status === filterValues.status;

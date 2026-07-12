@@ -5,6 +5,7 @@ import { Plus } from "lucide-react";
 import ClientFilterTable from "@/features/entidades/components/ClientFilterTable";
 import ClientFilterTableSkeleton from "@/features/entidades/components/ClientFilterTableSkeleton";
 import Link from "next/link";
+import { EntidadService } from "@/features/entidades/api/entidad.service";
 
 async function fetchDashboardData() {
   // await prisma.document.findMany(...)
@@ -23,8 +24,8 @@ async function fetchDashboardData() {
 }
 
 async function DocumentData() {
-  const data = await fetchDashboardData();
-  return <ClientFilterTable />;
+  const data = await EntidadService.inicialData();
+  return <ClientFilterTable data={data} />;
 }
 
 export default async function Entidades() {
