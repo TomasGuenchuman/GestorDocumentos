@@ -24,7 +24,6 @@ const filters = [
       { label: "Al día", value: "al-dia" },
       { label: "Proximo a vencer", value: "warning" },
       { label: "vencidos", value: "expired" },
-      { label: "Sin cargar", value: "sin-cargar" },
     ],
   },
 ];

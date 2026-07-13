@@ -7,22 +7,6 @@ import ClientFilterTableSkeleton from "@/features/entidades/components/ClientFil
 import Link from "next/link";
 import { EntidadService } from "@/features/entidades/api/entidad.service";
 
-async function fetchDashboardData() {
-  // await prisma.document.findMany(...)
-  // Simulamos un retraso artificial de 1 segundos para ver el efecto
-  await new Promise((resolve) => setTimeout(resolve, 500));
-
-  return {
-    vencidos: 12,
-    porVencer: 5,
-    vigentes: 48,
-    events: [
-      { date: "2026-06-17", title: "Seguro vence" },
-      { date: "2026-07-03", title: "Póliza flota principal" },
-    ],
-  };
-}
-
 async function DocumentData() {
   const data = await EntidadService.inicialData();
   return <ClientFilterTable data={data} />;

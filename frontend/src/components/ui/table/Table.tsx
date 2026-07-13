@@ -118,9 +118,24 @@ export default function Table({
     <div
       className={`w-full overflow-hidden rounded-md border border-slate-200 bg-white ${className}`}
     >
-      <div className="flex flex-wrap w-full overflow-x-auto">
+      <div
+        className="h-full flex flex-wrap w-full overflow-x-auto
+          [scrollbar-width:thin]
+          [scrollbar-color:#cbd5e1_transparent]
+
+          [&::-webkit-scrollbar]:h-1.5
+          [&::-webkit-scrollbar]:w-1.5
+
+          [&::-webkit-scrollbar-track]:bg-transparent
+
+          [&::-webkit-scrollbar-thumb]:rounded-full
+          [&::-webkit-scrollbar-thumb]:bg-slate-300
+
+          hover:[&::-webkit-scrollbar-thumb]:bg-slate-400
+      "
+      >
         <table className="w-full border-collapse text-sm">
-          <thead>
+          <thead className="sticky top-0">
             <tr className="bg-slate-100">
               {headers.map((header, index) => {
                 const align = getHeaderAlign(header);
@@ -206,11 +221,11 @@ export default function Table({
                             </div>
 
                             <div className="min-w-0">
-                              <p className="font-medium text-slate-900 truncate">
+                              <p className="font-medium text-slate-900 truncate text-wrap">
                                 {entityDisplay?.title}
                               </p>
 
-                              <p className="text-sm text-slate-500 truncate">
+                              <p className="text-sm text-slate-500 truncate text-wrap">
                                 {entityDisplay?.subtitle}
                               </p>
                             </div>
