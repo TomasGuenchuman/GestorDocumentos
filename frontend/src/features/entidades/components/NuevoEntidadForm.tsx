@@ -37,17 +37,9 @@ export default function NuevoEntidadForm() {
   return (
     <>
       <div className="flex flex-col">
-        {/* Header */}
-
-        <div className="px-8 pt-5">
-          <p className="mt-1 text-sm text-slate-500">
-            Complete los datos requeridos para registrar una nueva entidad.
-          </p>
-        </div>
-
         {/* Selector */}
 
-        <div className="px-8 py-8">
+        <div className="px-8 py-2">
           <label className="mb-3 block text-sm font-medium text-slate-700">
             Tipo de entidad
           </label>

@@ -30,7 +30,7 @@ export default function NuevoEntidad() {
     <RouteModal
       title="Datos de la Entidad"
       icon={<FileText size={22} className="text-slate-700" />}
-      panelClassName="max-w-4xl p-0 overflow-hidden min-w-[50vw]"
+      panelClassName="max-w-4xl p-0 overflow-hidden min-w-[70vw] max-h-[90vh]"
     >
       <Suspense fallback={<Spinner />}>
         <DataTable />
