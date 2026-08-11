@@ -103,6 +103,21 @@ export default function NuevoEntidadForm() {
 
           {selected === "vehiculo" && <VehiculoForm />}
         </div>
+        {/* Botones de acción */}
+        <div className="flex justify-end gap-3 border-t border-slate-200 px-8 py-4">
+          <button
+            type="button"
+            className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700"
+          >
+            Guardar
+          </button>
+        </div>
       </div>
     </>
   );
