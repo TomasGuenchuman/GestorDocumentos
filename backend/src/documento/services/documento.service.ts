@@ -15,6 +15,7 @@ import { Categoria } from '../entities/categoria.entity';
 import { Entidad } from 'src/entidad/entities/entidad.entity';
 import { EntidadService } from 'src/entidad/services/entidad.service';
 import { UpdateDocumentoDto } from '../dto/updateDocumento.dto';
+import { DocumentoVersion } from 'src/documento/entities/documentoVersion.entity';
 
 @Injectable()
 export class DocumentoService {
@@ -343,4 +344,61 @@ export class DocumentoService {
       };
     });
   }
+
+
+  async inicialData() {
+
+  const query = await this.documentoRepository
+    .createQueryBuilder('documento')
+    
+    // 1. Unimos y seleccionamos la categoría
+    .leftJoinAndSelect('documento.categoria', 'categoria')
+    
+    // 2. Unimos y seleccionamos la entidad
+    .leftJoinAndSelect('documento.entidad', 'entidad')
+    
+    // 3. Tu lógica original: obtenemos ÚNICAMENTE la última versión de cada documento
+    .leftJoinAndMapOne(
+      'documento.ultimaVersion',
+      DocumentoVersion,
+      'ultimaVersion',
+      `
+        ultimaVersion.documento_id = documento.id
+        AND ultimaVersion.version = (
+          SELECT MAX(dv.version)
+          FROM documento_version dv
+          WHERE dv.documento_id = documento.id
+        )
+      `,
+    )
+    
+    // 4. Filtramos las columnas para que coincida con tu tipo "DocumentoConUltimaVersion"
+    .select([
+      // Campos del Documento
+      'documento.id',
+      'documento.nombre',
+      'documento.requiere_vencimiento',
+      
+      // Campos de la Categoría
+      'categoria.id',
+      'categoria.nombre',
+      'categoria.tipo', 
+      
+      // Campos de la Entidad
+      'entidad.id',
+      'entidad.tipo',
+      // 'entidad.detalle', // Descomenta esta línea si 'detalle' es una columna real en la DB
+      
+      // Campos de la Última Versión
+      'ultimaVersion.id',
+      'ultimaVersion.fecha_vencimiento',
+      'ultimaVersion.version',
+      'ultimaVersion.url',
+    ])
+    .getMany();
+
+      console.log('query', query);
+      return query;
+    }
+
 }

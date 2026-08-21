@@ -85,9 +85,16 @@ export class DocumentoController {
     return this.documentoService.findAllWithLatestVersionByEntidadId(entidadId);
   }
 
+  @Get('entidad/inicial-data')
+  inicialData() {
+    return this.documentoService.inicialData();
+  }
+
   // GET /documentos/:id
   @Get(':id')
   async findOne(@Param('id', ParseIntPipe) id: number): Promise<Documento> {
     return await this.documentoService.findOne(id);
   }
+
+
 }
