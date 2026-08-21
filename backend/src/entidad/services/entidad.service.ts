@@ -199,52 +199,6 @@ export class EntidadService {
   }
 
   async inicialData() {
-    /*const entidades = await this.entidadRepository
-      .createQueryBuilder('entidad')
-
-      // ===== Detalle de la entidad =====
-      .leftJoinAndMapOne(
-        'entidad.persona',
-        Persona,
-        'persona',
-        'persona.id = entidad.id',
-      )
-      .leftJoinAndMapOne(
-        'entidad.vehiculo',
-        Vehiculo,
-        'vehiculo',
-        'vehiculo.id = entidad.id',
-      )
-      .leftJoinAndMapOne(
-        'entidad.empresa',
-        Empresa,
-        'empresa',
-        'empresa.id = entidad.id',
-      )
-
-      // ===== Todos los documentos =====
-      .leftJoinAndMapMany(
-        'entidad.documentos',
-        Documento,
-        'documento',
-        'documento.entidad_id = entidad.id',
-      )
-
-      // ===== Última versión de cada documento =====
-      .leftJoinAndMapOne(
-        'documento.ultimaVersion',
-        DocumentoVersion,
-        'ultimaVersion',
-        `
-          ultimaVersion.documento_id = documento.id
-          AND ultimaVersion.version = (
-            SELECT MAX(dv.version)
-            FROM documentoVersion dv
-            WHERE dv.documento_id = documento.id
-          )
-        `,
-      )
-      .getMany();*/
 
     const query = await this.entidadRepository
       .createQueryBuilder('entidad')
@@ -290,8 +244,6 @@ export class EntidadService {
           )
         `,
       );
-
-    console.log(query.getSql());
 
     const entidades = await query.getMany();
 
